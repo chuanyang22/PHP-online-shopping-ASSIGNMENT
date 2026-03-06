@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    halo guys this is my first try fotr git.
+    halo
 </body>
-</html><!DOCTYPE html>
+</html>
