@@ -1,6 +1,6 @@
 <?php
 $host    = 'localhost';
-$dbname  = 'db_member';
+$dbname  = 'amit1014_assignment';
 $port   = 3306;
 $db_user = 'root';  // 
 $db_pass = '';      // ✅ renamed
