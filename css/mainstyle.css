@@ -369,3 +369,25 @@ body {
     text-align: center;
     line-height: 1.5;
 }
+
+/* Styling for Remember Me checkbox */
+.remember-me-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.remember-me-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #9333EA; /* Makes the checkbox purple to match your links */
+}
+
+.remember-me-container label {
+    cursor: pointer;
+}

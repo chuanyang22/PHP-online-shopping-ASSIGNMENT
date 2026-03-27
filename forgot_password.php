@@ -88,9 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-success">
                 <?= $success_msg ?>
             </div>
+            <p style="text-align: center; color: #6b7280; font-size: 13px;">
+                Please check your inbox (and spam folder) for the recovery link.
+            </p>
         <?php else: ?>
             <div class="auth-subtitle">
-                Enter your registered <strong>email address</strong> below and we will send you a secure link to recover your access.
+                Enter your registered <strong>email or username</strong> below and we will send you a secure link to recover your access.
             </div>
 
             <?php if (!empty($error_msg)): ?>
@@ -100,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" action="forgot_password.php">
-                <input type="email" name="email" class="auth-input" placeholder="Email Address" required>
+                <input type="text" name="login_id" class="auth-input" placeholder="Email or Username" required>
                 <button type="submit" class="auth-btn">Send Recovery Email</button>
             </form>
         <?php endif; ?>

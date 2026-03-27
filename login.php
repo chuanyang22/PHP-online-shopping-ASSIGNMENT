@@ -14,18 +14,22 @@ if (isset($_SESSION['user_id'])) {
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // NEW: Accept either email or username from the form
-    $login_id = trim($_POST['login_id']); 
-    $password = $_POST['password'];
+    $login_id = $_POST['login_id'] ?? '';
+    $password = $_POST['password'] ?? '';
+    
+    // --- ADD THIS BLOCK TO FIX THE "UNDEFINED VARIABLE $USER" ERROR ---
+    $stmt = $pdo->prepare("SELECT * FROM member WHERE email = ? OR username = ?");
+    $stmt->execute([$login_id, $login_id]);
+    $user = $stmt->fetch();
+    // -----------------------------------------------------------------
 
-    if (empty($login_id) || empty($password)) {
-        $errors['general'] = "Please enter both Email/Username and password.";
+    // Handle "Remember Me" Cookie
+    if (isset($_POST['remember'])) {
+        setcookie("user_login", $login_id, time() + (30 * 24 * 60 * 60), "/");
     } else {
-        // NEW: Database checks BOTH email and username columns
-        $stmt = $pdo->prepare("SELECT * FROM member WHERE email = ? OR username = ?");
-        $stmt->execute([$login_id, $login_id]);
-        $user = $stmt->fetch();
-
+        if (isset($_COOKIE["user_login"])) {
+            setcookie("user_login", "", time() - 3600, "/");
+        }
         if ($user) {
             // HARD ACCOUNT BLOCK CHECK
             if ($user['status'] == 'Blocked') {
@@ -125,12 +129,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Please enter your email or username and password to log in.
         </p>
 
-        <form method="POST" action="login.php">
-            <input type="text" name="login_id" class="auth-input" placeholder="Email or Username" required>
-            <input type="password" name="password" class="auth-input" placeholder="Password" required>
-            
-            <button type="submit" class="auth-btn">LOG IN</button>
-        </form>
+    <form method="POST" action="login.php" autocomplete="off">
+    <input type="text" style="display:none">
+    <input type="password" style="display:none">
+
+    <input type="text" name="login_id" class="auth-input" placeholder="Email or Username" required autocomplete="one-time-code">
+    <input type="password" name="password" class="auth-input" placeholder="Password" required autocomplete="new-password">
+
+    <div class="remember-me-container">
+        <input type="checkbox" name="remember" id="remember">
+        <label for="remember">Remember Me</label>
+    </div>
+
+    <button type="submit" class="auth-btn">Log In</button>
+</form>
 
         <div class="auth-footer" style="margin-top: 20px; text-align: center; font-size: 14px;">
             New to Online Accessory Store? <a href="register.php" style="color: #0056b3; text-decoration: underline;">Sign Up</a>
