@@ -1,112 +1,113 @@
 <?php
+// forgot_password.php
 session_start();
 require_once 'lib/db.php';
-require_once 'lib/helpers.php';
+require_once 'lib/mailer.php';
 
-// NEW: Bring in PHPMailer classes
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+$success_msg = "";
+$error_msg = "";
 
-$message = "";
+if (isset($_SESSION['success_msg'])) {
+    $success_msg = $_SESSION['success_msg'];
+    unset($_SESSION['success_msg']); 
+}
+if (isset($_SESSION['error_msg'])) {
+    $error_msg = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
 
-    // Check if the email exists in the database
-    $stmt = $pdo->prepare("SELECT id FROM member WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if ($user) {
-        // 1. Generate a random, secure token
-        $token = bin2hex(random_bytes(32));
-        
-        // 2 & 3. Save to database using MySQL's clock (1 hour expiration)
-        $stmt = $pdo->prepare("UPDATE member SET reset_token = ?, reset_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?");
-        $stmt->execute([$token, $user['id']]);
-
-        // 4. SEND THE REAL EMAIL USING PHPMAILER
-        $reset_link = "http://localhost/your_project_folder/reset_password.php?token=" . $token; 
-
-        // Require the core PHPMailer files you downloaded
-        require 'PHPMailer/src/Exception.php';
-        require 'PHPMailer/src/PHPMailer.php';
-        require 'PHPMailer/src/SMTP.php';
-
-        $mail = new PHPMailer(true);
-
-        try {
-            // Server settings for Gmail
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'ahkong463@gmail.com'; // PUT YOUR GMAIL HERE
-            $mail->Password   = 'rvwx tifg eckv bfpi';  // PUT YOUR APP PASSWORD HERE (No spaces)
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            // Who it is from and who it is to
-            $mail->setFrom('ahkong463@gmail.com', 'Online Store Admin');
-            $mail->addAddress($email); // The user's email from the form
-
-            // Email Content
-            $mail->isHTML(true);
-            $mail->Subject = 'Password Reset Request';
-            $mail->Body    = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; color: #333;'>
-                    <h2>Reset Your Password</h2>
-                    <p>We received a request to reset your password. Click the button below to choose a new one:</p>
-                    <a href='$reset_link' style='background-color: #37c624; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;'>Reset Password</a>
-                    <p style='margin-top: 20px; font-size: 12px; color: #777;'>If you did not request this, please ignore this email.</p>
-                </div>
-            ";
-
-            $mail->send();
-            
-            $message = "<div style='color: #155724; background-color: #d4edda; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px;'>
-                            <strong>Success!</strong> An email has been sent to $email with reset instructions.
-                        </div>";
-                        
-        } catch (Exception $e) {
-            $message = "<div style='color: #3dca24; background-color: #f8d7da; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px;'>
-                            <strong>Message could not be sent.</strong> Mailer Error: {$mail->ErrorInfo}
-                        </div>";
-        }
+    if (empty($email)) {
+        $_SESSION['error_msg'] = "Please enter your email address.";
     } else {
-        $message = "<div style='color: #50d62c; background-color: #f8d7da; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px;'>
-                        <strong>Error:</strong> Email address not found in our system.
-                    </div>";
+        $stmt = $pdo->prepare("SELECT * FROM member WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        if ($user) {
+            $token = bin2hex(random_bytes(32));
+            $expires = date("Y-m-d H:i:s", time() + 1800); 
+
+            $stmt = $pdo->prepare("UPDATE member SET reset_token = ?, reset_expires = ? WHERE id = ?");
+            $stmt->execute([$token, $expires, $user['id']]);
+
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $current_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $current_url = explode('?', $current_url)[0]; 
+            $reset_link = str_replace('forgot_password.php', 'reset_password.php', $current_url) . "?token=" . $token;
+
+            $headline = "Account Recovery";
+            $body_content = '
+            <div style="font-family: \'Segoe UI\', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 40px 20px;">
+                <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; padding: 35px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #ee4d2d;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h2 style="color: #ee4d2d; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Online Accessory Store</h2>
+                    </div>
+                    <p style="font-size: 16px; color: #333333; margin-bottom: 20px;">Hello <strong>' . htmlspecialchars($user['username']) . '</strong>,</p>
+                    <p style="font-size: 15px; color: #555555; line-height: 1.6; margin-bottom: 15px;">We received a request to reset your password or unblock your account.</p>
+                    <p style="font-size: 15px; color: #555555; line-height: 1.6; margin-bottom: 30px;">To secure your account and set a new password, please click the button below. If your account was locked due to multiple login attempts, this will also restore your access.</p>
+                    <div style="text-align: center; margin-bottom: 35px;">
+                        <a href="' . $reset_link . '" style="background-color: #ee4d2d; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 15px; border-radius: 5px; display: inline-block;">RESET MY PASSWORD</a>
+                    </div>
+                    <div style="border-top: 1px solid #eeeeee; padding-top: 20px; text-align: center;">
+                        <p style="font-size: 12px; color: #999999; margin: 0; line-height: 1.5;">If you did not request this change, you can safely ignore this email.<br>Your account remains perfectly secure.</p>
+                    </div>
+                </div>
+            </div>';
+
+            if (send_formatted_email($user['email'], $user['username'], "Password Reset Request", $headline, $body_content, $reset_link, "RESET PASSWORD")) {
+                $_SESSION['success_msg'] = "If an account matches that email, a secure recovery link has been sent.";
+            } else {
+                $_SESSION['error_msg'] = "System error: Failed to send recovery email. Please try again later.";
+            }
+        } else {
+            $_SESSION['success_msg'] = "If an account matches that email, a secure recovery link has been sent.";
+        }
     }
+    
+    header("Location: forgot_password.php");
+    exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Recover Account - Online Accessory Store</title>
     <link rel="stylesheet" href="css/mainstyle.css">
 </head>
 <body class="auth-body">
-
     <div class="auth-card">
-        <div class="auth-title" style="font-size: 24px;">Reset Password</div>
+        <div class="auth-title">Recover Account</div>
         
-        <p style="font-size: 14px; color: #555; margin-bottom: 20px;">
-            Enter your email address and we will send you a link to reset your password.
-        </p>
+        <?php if (!empty($success_msg)): ?>
+            <div class="auth-success">
+                <?= $success_msg ?>
+            </div>
+        <?php else: ?>
+            <div class="auth-subtitle">
+                Enter your registered <strong>email address</strong> below and we will send you a secure link to recover your access.
+            </div>
 
-        <?= $message ?>
+            <?php if (!empty($error_msg)): ?>
+                <div class="auth-error">
+                    <?= $error_msg ?>
+                </div>
+            <?php endif; ?>
 
-        <form method="POST" action="forgot_password.php">
-            <input type="email" name="email" class="auth-input" placeholder="Your Email Address" required>
-            <button type="submit" class="auth-btn">Send Reset Link</button>
-        </form>
+            <form method="POST" action="forgot_password.php">
+                <input type="email" name="email" class="auth-input" placeholder="Email Address" required>
+                <button type="submit" class="auth-btn">Send Recovery Email</button>
+            </form>
+        <?php endif; ?>
 
         <div class="auth-footer">
-            Remembered it? <a href="login.php">Back to Login</a>
+            Remembered your details? <a href="login.php">Back to Login</a>
         </div>
     </div>
-
 </body>
 </html>

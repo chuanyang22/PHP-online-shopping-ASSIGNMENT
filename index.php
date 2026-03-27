@@ -10,7 +10,7 @@ require_once 'lib/helpers.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopee Clone - Home</title>
+    <title>Online Accessory Store - Home</title>
     <link rel="stylesheet" href="css/mainstyle.css">
 </head>
 <body style="margin: 0; background-color: #f5f5f5;">

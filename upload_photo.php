@@ -1,142 +1,184 @@
 <?php
+// upload_photo.php (Cropping Update)
 session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
 
-// Check if user is logged in
+// Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$errors = [];
-$success_msg = '';
+$error_msg = "";
+$success_msg = "";
 
-// Handling the file upload logic
-if (isset($_POST['upload_photo'])) {
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $file_tmp = $_FILES['photo']['tmp_name'];
-        $file_name = $_FILES['photo']['name'];
-        
-        // Allowed file types (security measure)
-        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-        $file_type = mime_content_type($file_tmp);
+// Process the cropped image upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crop_data_base64'])) {
+    $cropped_image_base64 = $_POST['crop_data_base64'];
 
-        if (in_array($file_type, $allowed_types)) {
-            // Check file size (e.g., limit to 2MB)
-            $file_size = $_FILES['photo']['size'];
-            if ($file_size > 2 * 1024 * 1024) { // 2MB in bytes
-                $errors['photo'] = "File is too large (max 2MB).";
-            } else {
-                // Generate unique filename (Prevents overwriting)
-                $ext = pathinfo($file_name, PATHINFO_EXTENSION);
-                $new_filename = 'user_' . $user_id . '_' . time() . '.' . $ext;
+    if (!empty($cropped_image_base64)) {
+        // 1. Clean and decode the base64 string
+        $image_data_part = substr($cropped_image_base64, strpos($cropped_image_base64, ",") + 1);
+        $decoded_image = base64_decode($image_data_part);
+
+        if ($decoded_image) {
+            // 2. Create a unique filename 
+            $filename = "profile_" . $_SESSION['user_id'] . "_" . time() . ".jpg";
+            $filepath = 'uploads/' . $filename;
+
+            // 3. Save the decoded image
+            if (file_put_contents($filepath, $decoded_image)) {
                 
-                // Destination path inside your 'uploads/' folder
-                $destination = 'uploads/' . $new_filename;
-                
-                // Move the file from temp folder to your project folder
-                if (move_uploaded_file($file_tmp, $destination)) {
-                    // Update the user's record in the 'member' database
-                    $stmt = $pdo->prepare("UPDATE member SET profile_photo = ? WHERE id = ?");
-                    $stmt->execute([$new_filename, $user_id]);
-                    
-                    $success_msg = "Profile photo updated successfully!";
-                } else {
-                    $errors['photo'] = "Failed to move the uploaded file.";
+                // 4. Fetch the old profile photo to delete it
+                $stmt = $pdo->prepare("SELECT profile_photo FROM member WHERE id = ?");
+                $stmt->execute([$_SESSION['user_id']]);
+                $user = $stmt->fetch();
+
+                // 5. Delete the old photo if it isn't the default one
+                if ($user['profile_photo'] && $user['profile_photo'] != 'default_avatar.jpg') {
+                    if (file_exists('uploads/' . $user['profile_photo'])) {
+                        unlink('uploads/' . $user['profile_photo']);
+                    }
                 }
+
+                // 6. Update the database with the new filename
+                $stmt = $pdo->prepare("UPDATE member SET profile_photo = ? WHERE id = ?");
+                $stmt->execute([$filename, $_SESSION['user_id']]);
+
+                // 7. Success! Redirect back to profile
+                header("Location: profile.php?photo_updated=1");
+                exit();
+            } else {
+                $error_msg = "Server error: Failed to save the image file.";
             }
         } else {
-            $errors['photo'] = "Only JPG, PNG, and GIF files are allowed.";
+            $error_msg = "Error: Invalid image data received.";
         }
     } else {
-        // General error handling (e.g., no file selected)
-        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_NO_FILE) {
-            $errors['photo'] = "Please select an image file first.";
-        } else {
-            $errors['photo'] = "Please select a valid image file.";
-        }
+        $error_msg = "Error: Please upload and crop an image first.";
     }
 }
+
+// Fetch current profile photo for display
+$stmt = $pdo->prepare("SELECT profile_photo FROM member WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch();
+$profile_photo = $user['profile_photo'] ? $user['profile_photo'] : 'default_avatar.jpg';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/mainstyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload New Photo</title>
-    <link rel="stylesheet" href="css/mainstyle.css"> 
+    <title>Update Profile Photo - Online Accessory Store</title>
+    <style>
+        .preview-container { text-align: center; margin-bottom: 20px; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ee4d2d; }
+        .cropper-container { text-align: center; margin-top: 20px; display: none; }
+        .img-to-crop { max-width: 100%; max-height: 400px; display: block; margin: 0 auto; }
+        #save-crop { display: none; margin-top: 15px; }
+    </style>
 </head>
-<body class="auth-body"> <div class="upload-card">
-        <h2>Upload New Photo</h2>
-        <p>
-            <a href="profile.php" style="color: #ee4d2d; text-decoration: none; font-weight: bold;">Back to Profile</a>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-title">Update Profile Photo</div>
+        <p style="text-align: center; color: #555; margin-bottom: 20px; font-size: 14px;">
+            Please select an image to upload and crop. This will be visible on your profile page.
         </p>
-        <br>
 
-        <?php if (!empty($success_msg)): ?>
-            <div style="color: green; border: 1px solid green; background-color: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 14px;">
-                <?= $success_msg ?> (Refreshing profile...)
-            </div>
-            <script>setTimeout(function(){ window.location.href = 'profile.php'; }, 2000);</script>
-        <?php endif; ?>
+        <?php if (!empty($error_msg)): ?><div class="auth-error"><?= $error_msg ?></div><?php endif; ?>
 
-        <form method="POST" action="upload_photo.php" enctype="multipart/form-data">
-            
-            <div id="photo-preview-area">
-                
-                <div id="preview-placeholder" class="preview-box-empty">
-                    <span>Preview Area</span>
-                </div>
-                
-                <img id="photo-preview" src="https://via.placeholder.com/200" alt="New Photo Preview">
-            </div>
+        <div class="preview-container">
+            <img src="uploads/<?= htmlspecialchars($profile_photo) ?>" class="avatar" alt="Current Profile Photo">
+        </div>
 
-            <input type="file" name="photo" id="photo-input" accept="image/png, image/jpeg, image/gif">
-            <br>
-            
-            <?php if (isset($errors['photo'])): ?>
-                <div style="color: red; font-size: 13px; margin-bottom: 15px;"><?= $errors['photo'] ?></div>
-            <?php endif; ?>
+        <input type="file" name="raw_photo" id="photo_input" accept="image/*" class="auth-input" style="background: white;">
 
-            <button type="submit" name="upload_photo" class="auth-btn">Upload Photo</button>
+        <div class="cropper-container">
+            <img id="image_to_crop_element" class="img-to-crop">
+            <button type="button" class="auth-btn" id="save-crop">SAVE CROP</button>
+        </div>
+
+        <form method="POST" action="upload_photo.php" id="final_crop_form">
+            <input type="hidden" name="crop_data_base64" id="crop_data_base64_field">
         </form>
+
+        <div class="auth-footer"><a href="profile.php">Back to Profile</a></div>
     </div>
 
     <script>
-        // Listen for when the "Choose File" input changes (user selects a file)
-        document.getElementById('photo-input').onchange = function (evt) {
-            const tgt = evt.target || window.event.srcElement,
-                  files = tgt.files;
-            
-            const previewImage = document.getElementById('photo-preview');
-            const previewPlaceholder = document.getElementById('preview-placeholder');
-            
-            // Check if FileReader is supported by the browser and a file was selected
-            if (FileReader && files && files.length) {
-                const fr = new FileReader();
-                
-                // When the browser finishes reading the selected file...
-                fr.onload = function () {
-                    // 1. Update the source of the hidden preview image tag
-                    previewImage.src = fr.result;
-                    
-                    // 2. SWAP VISIBILITY: Hide placeholder, show image
-                    previewImage.style.display = 'block'; 
-                    previewPlaceholder.style.display = 'none'; 
-                }
-                
-                // Read the selected file as a URL (base64 data)
-                fr.readAsDataURL(files[0]);
-            } else {
-                // (Fallback) If reading fails or no file, revert to placeholder
-                previewImage.style.display = 'none'; 
-                previewPlaceholder.style.display = 'flex'; 
-            }
-        }
-    </script>
+        const photoInput = document.getElementById('photo_input');
+        const cropperContainer = document.querySelector('.cropper-container');
+        const imageToCropElement = document.getElementById('image_to_crop_element');
+        const saveCropButton = document.getElementById('save-crop');
+        const cropDataBase64Field = document.getElementById('crop_data_base64_field');
+        const finalCropForm = document.getElementById('final_crop_form');
+        let cropperInstance;
 
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Check if it's an image
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload a valid image file (JPG, PNG, GIF).');
+                    photoInput.value = ''; 
+                    return;
+                }
+
+                // Load the image into the cropper
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    
+                    // NEW/FIXED: Update the LITTLE AVATAR at the top too!
+                    const mainAvatar = document.querySelector('.preview-container .avatar');
+                    if (mainAvatar) mainAvatar.src = event.target.result;
+                    
+                    // Update the large image that gets cropped
+                    imageToCropElement.src = event.target.result;
+                    cropperContainer.style.display = 'block';
+                    saveCropButton.style.display = 'inline-block';
+
+                    // Destroy old cropper instance if it exists
+                    if (cropperInstance) {
+                        cropperInstance.destroy();
+                    }
+
+                    // Initialize new cropper with FIXED SETTINGS
+                    cropperInstance = new Cropper(imageToCropElement, {
+                        aspectRatio: 1,      // Forces a square crop
+                        viewMode: 1,         // Keeps crop box inside boundaries
+                        dragMode: 'move',    // Enables image dragging within the box
+                        autoCropArea: 0.8,   // FIXED: Initial crop box is 80% (not 100%), so you can see it!
+                        cropBoxMovable: true,
+                        cropBoxResizable: true
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle the Save Crop button click
+        saveCropButton.addEventListener('click', () => {
+            if (cropperInstance) {
+                // Get the cropped canvas data at a decent size
+                const canvas = cropperInstance.getCroppedCanvas({
+                    width: 300,
+                    height: 300
+                });
+                
+                // Convert to base64 string
+                const base64data = canvas.toDataURL('image/jpeg');
+                
+                // Put data in the hidden form field and submit
+                cropDataBase64Field.value = base64data;
+                finalCropForm.submit();
+            }
+        });
+    </script>
 </body>
 </html>

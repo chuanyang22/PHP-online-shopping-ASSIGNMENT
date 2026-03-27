@@ -1,21 +1,11 @@
 <?php
+// login.php
 session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
+require_once 'lib/mailer.php';
 
-// ==========================================
-// NEW: AUTO-LOGIN VIA COOKIE
-// ==========================================
-// If they aren't logged in, but they HAVE a remember me cookie...
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_user'])) {
-    // Automatically set their session using the cookie!
-    $_SESSION['user_id'] = $_COOKIE['remember_user'];
-    
-    // Send them straight to the profile page
-    header("Location: profile.php");
-    exit();
-}
-
+// Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
@@ -24,64 +14,85 @@ if (isset($_SESSION['user_id'])) {
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
+    // NEW: Accept either email or username from the form
+    $login_id = trim($_POST['login_id']); 
     $password = $_POST['password'];
 
-    if (empty($email) || empty($password)) {
-        $errors['general'] = "Please enter both email and password.";
+    if (empty($login_id) || empty($password)) {
+        $errors['general'] = "Please enter both Email/Username and password.";
     } else {
-        // Fetch the user from the database
-        $stmt = $pdo->prepare("SELECT * FROM member WHERE email = ?");
-        $stmt->execute([$email]);
+        // NEW: Database checks BOTH email and username columns
+        $stmt = $pdo->prepare("SELECT * FROM member WHERE email = ? OR username = ?");
+        $stmt->execute([$login_id, $login_id]);
         $user = $stmt->fetch();
 
         if ($user) {
-            // --- NEW: TEMPORARY BLOCKING CHECK ---
-            if ($user['lockout_time'] !== null) {
+            // HARD ACCOUNT BLOCK CHECK
+            if ($user['status'] == 'Blocked') {
+                $errors['general'] = "Your account is blocked due to too many failed attempts! <a href='forgot_password.php' style='color: #ee4d2d;'>Please reset your password to unblock.</a>";
+            }
+
+            // ESCALATING TEMPORARY LOCKOUT CHECK
+            if ($user['lockout_time'] !== null && empty($errors)) {
                 $lockout_time = strtotime($user['lockout_time']);
                 $current_time = time();
 
                 if ($current_time < $lockout_time) {
                     $minutes_left = ceil(($lockout_time - $current_time) / 60);
-                    $errors['general'] = "Account locked due to too many failed attempts. Please try again in $minutes_left minute(s).";
+                    $errors['general'] = "Account temporarily locked. Please try again in $minutes_left minute(s).";
                 } else {
-                    // Time is up! Unlock the account
-                    $stmt = $pdo->prepare("UPDATE member SET failed_attempts = 0, lockout_time = NULL WHERE id = ?");
+                    $stmt = $pdo->prepare("UPDATE member SET lockout_time = NULL WHERE id = ?");
                     $stmt->execute([$user['id']]);
                 }
             }
 
-            // Only proceed if there are no lockout errors yet
+            // ONLY PROCEED IF NO LOCKOUT ERRORS
             if (empty($errors)) {
-                // Check if the password matches
                 if (password_verify($password, $user['password'])) {
-                    // Login Success! Reset attempts to 0.
-                    $stmt = $pdo->prepare("UPDATE member SET failed_attempts = 0, lockout_time = NULL WHERE id = ?");
-                    $stmt->execute([$user['id']]);
+                    
+                    // LOGIN PHASE 1: PASSWORD SUCCESS -> SEND OTP
+                    $otp = random_int(100000, 999999);
+                    $otp_expires = date('Y-m-d H:i:s', time() + 300); // 5 minutes
 
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = $user['role'];
+                    $stmt = $pdo->prepare("UPDATE member SET otp_code = ?, otp_expires = ? WHERE id = ?");
+                    $stmt->execute([$otp, $otp_expires, $user['id']]);
 
-                    if (isset($_POST['remember_me'])) {
-                        // Creates a cookie that lasts for 30 days
-                        setcookie('remember_user', $user['id'], time() + (86400 * 30), "/");
+                    $headline = "Your Secure Log In Code";
+                    $body_content = "<p>Welcome back! Please enter this code on the website to complete your login:</p>
+                                     <h2 style='background-color: #f8f9fa; padding: 20px; text-align: center; color: #ee4d2d; letter-spacing: 5px;'>$otp</h2>
+                                     <p>This code will expire in 5 minutes.</p>";
+                    
+                    if (send_formatted_email($user['email'], $user['username'], 'Your Store Login Code', $headline, $body_content)) {
+                        $_SESSION['pending_user_id'] = $user['id']; 
+                        header("Location: login_otp.php");
+                        exit();
+                    } else {
+                        $stmt = $pdo->prepare("UPDATE member SET otp_code = NULL, otp_expires = NULL WHERE id = ?");
+                        $stmt->execute([$user['id']]);
+                        $errors['general'] = "System Error: Failed to send OTP email.";
                     }
 
-                    header("Location: profile.php?login_success=1");
-                    exit();
                 } else {
-                    // --- NEW: FAILED ATTEMPT LOGIC ---
+                    // FAILED ATTEMPT LOGIC
                     $attempts = $user['failed_attempts'] + 1;
                     
                     if ($attempts >= 3) {
-                        // Lock them out for 5 minutes (300 seconds)
-                        $lockout_until = date('Y-m-d H:i:s', time() + 300);
-                        $stmt = $pdo->prepare("UPDATE member SET failed_attempts = ?, lockout_time = ? WHERE id = ?");
-                        $stmt->execute([$attempts, $lockout_until, $user['id']]);
-                        $errors['general'] = "Too many failed attempts. Account locked for 5 minutes.";
+                        $lockout_count = $user['lockout_count'] + 1;
+                        $minutes = 5 + (5 * ($lockout_count - 1));
+                        
+                        if ($minutes > 15) $minutes = 15;
+                        $lockout_until = date('Y-m-d H:i:s', time() + ($minutes * 60));
+                        
+                        if ($lockout_count >= 4) {
+                            $stmt = $pdo->prepare("UPDATE member SET failed_attempts = 0, lockout_time = NULL, status = 'Blocked' WHERE id = ?");
+                            $stmt->execute([$user['id']]);
+                            $errors['general'] = "Too many failed login attempts! Account is blocked! Please reset your password to unblock.";
+                        } else {
+                            $stmt = $pdo->prepare("UPDATE member SET failed_attempts = ?, lockout_time = ?, lockout_count = ? WHERE id = ?");
+                            $stmt->execute([$attempts, $lockout_until, $lockout_count, $user['id']]);
+                            $errors['general'] = "Too many failed attempts. Account locked for $minutes minute(s).";
+                        }
                     } else {
-                        // Just record the failed attempt
                         $stmt = $pdo->prepare("UPDATE member SET failed_attempts = ? WHERE id = ?");
                         $stmt->execute([$attempts, $user['id']]);
                         $chances_left = 3 - $attempts;
@@ -90,54 +101,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } else {
-            $errors['general'] = "Account not found. <a href='register.php'>Please register here.</a>";
+            $errors['general'] = "Account not found. <a href='register.php' style='color: #ee4d2d;'>Please register here.</a>";
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/mainstyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/login.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log In</title>
+    <title>Log In - Online Accessory Store</title>
 </head>
 <body class="auth-body">
-
     <div class="auth-card">
         <div class="auth-title">Log In</div>
-
-        <?php if (isset($errors['general'])): ?>
-            <div class="auth-error">
-                <?= $errors['general'] ?>
-            </div>
-        <?php endif; ?>
+        
+        <p style="text-align: center; color: #121010; margin-bottom: 20px; font-size: 14px; box-shadow: 0 5px 5px rgba(58, 36, 36, 0.1); padding: 15px; border-radius: 4px;">
+            Please enter your email or username and password to log in.
+        </p>
 
         <form method="POST" action="login.php">
-            <input type="text" name="email" class="auth-input" placeholder="Email" value="<?= isset($email) ? sanitize($email) : '' ?>">
+            <input type="text" name="login_id" class="auth-input" placeholder="Email or Username" required>
+            <input type="password" name="password" class="auth-input" placeholder="Password" required>
             
-           <input type="password" name="password" class="auth-input" placeholder="Password">
-
-    <div style="text-align: left; margin-bottom: 15px; font-size: 14px; color: #555;">
-        <input type="checkbox" name="remember_me" id="remember_me">
-        <label for="remember_me">Remember Me</label>
-    </div>
-
-    <button type="submit" class="auth-btn">LOG IN</button>
-
-    <div style="text-align: center; margin-top: 15px;">
-    <a href="forgot_password.php" style="color: #5c2bff; font-size: 14px; text-decoration: underline;">Forgot Password?</a>
-    </div>
-            
+            <button type="submit" class="auth-btn">LOG IN</button>
         </form>
 
-        <div class="auth-footer">
-            New to our store? <a href="register.php">Sign Up</a>
+        <div class="auth-footer" style="margin-top: 20px; text-align: center; font-size: 14px;">
+            New to Online Accessory Store? <a href="register.php" style="color: #0056b3; text-decoration: underline;">Sign Up</a>
+            <br><br>
+            <a href="forgot_password.php" style="color: #ee4d2d; font-weight: bold; text-decoration: none;">Forgot Password or Account Blocked?</a>
         </div>
     </div>
-
 </body>
 </html>
