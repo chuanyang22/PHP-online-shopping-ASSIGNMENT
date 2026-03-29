@@ -1,4 +1,12 @@
 <?php
+// --- SECURITY LOCK ---
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: login.php");
+    exit;
+}
+// ---------------------
+
 // Turn on the lights for errors!
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -93,6 +101,10 @@ if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
         .btn-green:hover { background: #1e7e34; }
         .btn-grey { background: #6c757d; }
         .btn-grey:hover { background: #5a6268; }
+        
+        /* --- STYLES FOR THE LOGOUT BUTTON --- */
+        .btn-red { background: #dc3545; }
+        .btn-red:hover { background: #a71d2a; }
 
         .search-container { 
             margin-top: 40px; margin-bottom: 20px; padding: 20px; 
@@ -140,6 +152,10 @@ if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
         
         <a href="../index.php" style="text-decoration: none;">
             <button type="button" class="btn-grey">🛍️ View Storefront</button>
+        </a>
+        
+        <a href="logout.php" style="text-decoration: none; margin-left: auto;">
+            <button type="button" class="btn-red">🚪 Log Out</button>
         </a>
     </div>
 

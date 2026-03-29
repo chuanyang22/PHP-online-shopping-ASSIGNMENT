@@ -148,6 +148,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             New to Online Accessory Store? <a href="register.php" style="color: #0056b3; text-decoration: underline;">Sign Up</a>
             <br><br>
             <a href="forgot_password.php" style="color: #ee4d2d; font-weight: bold; text-decoration: none;">Forgot Password or Account Blocked?</a>
+            
+            <br><br>
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+            <a href="admin/login.php" style="color: #666; font-size: 13px; text-decoration: none; font-weight: bold;">🛡️ Log in as Admin</a>
         </div>
     </div>
 </body>
