@@ -34,11 +34,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 unset($_SESSION['pending_user_id']);
 
                 // ==========================================
-                // NEW: JAVASCRIPT SUCCESS POP-UP!
+                // NEW: AUTO-LOGIN TOKEN GENERATOR
                 // ==========================================
+                if (isset($_SESSION['wants_remember_me']) && $_SESSION['wants_remember_me'] === true) {
+                    $token = bin2hex(random_bytes(32)); 
+                    
+                    $stmt = $pdo->prepare("UPDATE member SET remember_token = ? WHERE id = ?");
+                    $stmt->execute([$token, $user['id']]); 
+                    
+                    setcookie("auto_login_token", $token, time() + (30 * 24 * 60 * 60), "/");
+                    unset($_SESSION['wants_remember_me']); // Clean up session variable
+                }
+                // ==========================================
+
+                // JAVASCRIPT SUCCESS POP-UP!
                 echo "<script>
                         alert('Login successful! Welcome back, " . htmlspecialchars($user['username']) . "!');
-                        window.location.href = 'profile.php';
+                        window.location.href = 'index.php'; 
                       </script>";
                 exit();
 

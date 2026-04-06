@@ -391,3 +391,95 @@ body {
 .remember-me-container label {
     cursor: pointer;
 }
+
+/* =========================================================
+   PROFILE PHOTO WORKSHOP (Circular UI Redesign)
+   ========================================================= */
+.workshop-card {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* The Circular Avatar Preview */
+.avatar-preview-wrapper {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 25px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: #f1f1f1;
+}
+
+.avatar-preview-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Cropper Container */
+.img-to-crop-container {
+    max-height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+/* Buttons */
+.workshop-btn-group {
+    display: flex;
+    flex-direction: column; /* CHANGED: This stacks the buttons vertically */
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.workshop-btn {
+    border: none;
+    padding: 14px 20px; /* Made slightly taller to match login buttons */
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+    width: 100%; /* CHANGED: Forces buttons to be full width */
+    box-sizing: border-box;
+}
+
+/* The grey upload button */
+.btn-upload { 
+    background-color: #e2e8f0; 
+    color: #334155; 
+}
+.btn-upload:hover { 
+    background-color: #cbd5e1; 
+}
+
+/* The green save button */
+.btn-save { 
+    background-color: #28a745; 
+    color: white; 
+    opacity: 0.5; /* Dimmed until a photo is picked */
+    cursor: not-allowed;
+}
+.btn-save.active {
+    opacity: 1;
+    cursor: pointer;
+}
+.btn-save.active:hover { 
+    background-color: #218838; 
+}
+
+/* PRO TRICK: Make the cropping box circular too! */
+.cropper-view-box,
+.cropper-face {
+  border-radius: 50%;
+}

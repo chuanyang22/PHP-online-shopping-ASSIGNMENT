@@ -3,6 +3,8 @@ session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
 
+auth('Member'); // NEW: Only logged-in users can access this page
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();

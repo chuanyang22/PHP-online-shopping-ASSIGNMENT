@@ -5,12 +5,15 @@ require_once 'lib/db.php';
 require_once 'lib/helpers.php';
 require_once 'lib/mailer.php';
 
+// FIXED: Removed auth('Member') because they are NOT logged in when resetting!
+
 $error_msg = "";
 $success_msg = "";
 $token_valid = false;
 $user_id = null;
 $token = "";
 
+// 1. Verify the Token from the URL
 if (isset($_GET['token'])) {
     $token = trim($_GET['token']);
     $stmt = $pdo->prepare("SELECT id, reset_expires FROM member WHERE reset_token = ?");
@@ -27,25 +30,27 @@ if (isset($_GET['token'])) {
     $error_msg = "No reset token provided. Please use the link sent to your email.";
 }
 
+// 2. Handle the Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valid) {
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if (empty($new_password) || empty($confirm_password)) {
-        $error_msg = "Please fill in both password fields.";
+    if (strlen($new_password) < 8) {
+        $error_msg = "Password must be at least 8 characters long.";
     } elseif ($new_password !== $confirm_password) {
-        $error_msg = "Passwords do not match! Please try again.";
-    } elseif (strlen($new_password) < 8) { 
-        $error_msg = "Your new password must be at least 8 characters long."; 
+        $error_msg = "Passwords do not match.";
     } else {
+        // Hash the new password
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE member SET password = ?, reset_token = NULL, reset_expires = NULL, failed_attempts = 0, lockout_count = 0, lockout_time = NULL, status = 'Active' WHERE id = ?");
+
+        // Update the database: change password, clear the token, and UNBLOCK the account!
+        $stmt = $pdo->prepare("UPDATE member SET password = ?, reset_token = NULL, reset_expires = NULL, status = 'Active', failed_attempts = 0, lockout_count = 0, lockout_time = NULL WHERE id = ?");
         
         if ($stmt->execute([$hashed_password, $user_id])) {
-            $success_msg = "Success! Your password has been updated and your access is fully restored.";
-            $token_valid = false; 
+            $success_msg = "Your password has been successfully reset! Your account is active.";
+            $token_valid = false; // Hide the form
         } else {
-            $error_msg = "System error: Failed to update password. Please contact support.";
+            $error_msg = "System error: Failed to update password.";
         }
     }
 }
@@ -64,20 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valid) {
         <div class="auth-title">Set New Password</div>
         
         <?php if (!empty($error_msg)): ?>
-            <div class="auth-error">
+            <div class="auth-error" style="color: red; background-color: #fdd; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center;">
                 <?= $error_msg ?>
             </div>
         <?php endif; ?>
 
         <?php if (!empty($success_msg)): ?>
-            <div class="auth-success">
+            <div class="auth-success" style="color: green; background-color: #dfd; border: 1px solid green; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center;">
                 <?= $success_msg ?>
             </div>
+            <br>
             <a href="login.php" class="auth-btn" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">GO TO LOGIN</a>
         <?php endif; ?>
 
         <?php if ($token_valid): ?>
-            <div class="auth-subtitle">
+            <div class="auth-subtitle" style="text-align: center; margin-bottom: 15px;">
                 Please enter your new professional password below. This must be a minimum of 8 characters.
             </div>
             <form method="POST" action="reset_password.php?token=<?= htmlspecialchars($token) ?>">
@@ -89,8 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valid) {
         <?php endif; ?>
 
         <?php if (!$token_valid && empty($success_msg)): ?>
-            <div class="auth-footer">
-                <a href="login.php">Back to Login</a>
+            <div class="auth-footer" style="margin-top: 20px; text-align: center;">
+                <a href="login.php" style="color: #0056b3;">Back to Login</a>
             </div>
         <?php endif; ?>
     </div>
