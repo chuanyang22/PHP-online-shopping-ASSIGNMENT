@@ -31,7 +31,8 @@ $user = $stmt->fetch();
         <h2>My Profile</h2>
         <p>
             <a href="index.php" style="color: #3d1ac7; text-decoration: underline;">Back to Home</a> | 
-            <a href="logout.php" style="color: #3d1ac7; text-decoration: underline;">Logout</a>
+            <a href="logout.php" style="color: #3d1ac7; text-decoration: underline;">Logout</a> |
+            <a href="member/order_history.php" style="color: #3d1ac7; text-decoration: underline">Orders History</a> 
         </p>
         <br>
 

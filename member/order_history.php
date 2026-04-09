@@ -1,17 +1,23 @@
 <?php
-// order_history.php
-require_once 'lib/auth.php';
-require_once 'lib/db.php';
-require_once 'lib/helpers.php';
+require_once '../lib/auth.php';
+require_once '../lib/db.php';
+require_once '../lib/helpers.php';
 
-// Ensure only logged-in members can access
-require_login();
+require_login(); 
+$member_id = $_SESSION['user_id']; 
 
-$user_id = $_SESSION['user_id'];
+// Handle Cancellation Request
+if (isset($_POST['cancel_order_id'])) {
+    $order_id = $_POST['cancel_order_id'];
+    // Only allow cancellation if the order belongs to the user and is still 'Pending'
+    $stmt = $pdo->prepare("UPDATE orders SET status = 'Cancelled' WHERE id = ? AND member_id = ? AND status = 'Pending'");
+    $stmt->execute([$order_id, $member_id]);
+    header("Location: order_history.php?msg=Order Cancelled");
+    exit();
+}
 
-// Fetch all orders for this specific member
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE member_id = ? ORDER BY order_date DESC");
-$stmt->execute([$user_id]);
+$stmt->execute([$member_id]);
 $orders = $stmt->fetchAll();
 ?>
 
@@ -21,79 +27,40 @@ $orders = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>My Order History</title>
     <link rel="stylesheet" href="css/mainstyle.css">
-    <style>
-        /* Custom table styling to match your theme */
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .order-table th, .order-table td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        .order-table th {
-            background-color: #f8fafc;
-            color: #4b5563;
-        }
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-completed { background: #d1fae5; color: #065f46; }
-    </style>
 </head>
-<body style="background-color: #f4f7f6;">
-
+<body>
     <div class="page-container">
-        <div class="auth-footer" style="text-align: left; margin-bottom: 20px;">
-            <a href="profile.php">← Back to Profile</a>
-        </div>
-
-        <h2 style="color: #333;">📦 My Order History</h2>
-        <p style="color: #666;">View and track your previous snack purchases.</p>
-
-        <?php if (empty($orders)): ?>
-            <div class="auth-card" style="margin-top: 30px;">
-                <p>You haven't placed any orders yet!</p>
-                <a href="index.php" class="auth-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 10px 20px;">Start Shopping</a>
-            </div>
-        <?php else: ?>
-            <table class="order-table">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Date</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($orders as $order): ?>
-                        <tr>
-                            <td>#<?= $order['id'] ?></td>
-                            <td><?= date('d M Y, h:i A', strtotime($order['order_date'])) ?></td>
-                            <td>RM <?= number_format($order['total_amount'], 2) ?></td>
-                            <td>
-                                <span class="status-badge <?= $order['status'] == 'Pending' ? 'status-pending' : 'status-completed' ?>">
-                                    <?= sanitize($order['status']) ?>
-                                </span>
-                            </td>
-                            <td>
-                                <a href="order_details.php?id=<?= $order['id'] ?>" style="color: #9333EA;">View Details</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
+        <h2>My Order History</h2>
+        <table width="100%" border="1" style="border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f4f4f4;">
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td>#<?= $order['id'] ?></td>
+                    <td><?= date('d M Y', strtotime($order['order_date'])) ?></td>
+                    <td>RM <?= number_format($order['total_amount'], 2) ?></td>
+                    <td><?= $order['status'] ?></td>
+                    <td>
+                        <a href="order_details.php?id=<?= $order['id'] ?>">View Details</a>
+                        <?php if ($order['status'] == 'Pending'): ?>
+                            | <form method="POST" style="display:inline;">
+                                <input type="hidden" name="cancel_order_id" value="<?= $order['id'] ?>">
+                                <button type="submit" onclick="return confirm('Cancel this order?')">Cancel Order</button>
+                            </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
-
 </body>
 </html>
