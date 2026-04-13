@@ -108,7 +108,7 @@ $products = $stmt->fetchAll();
                 <a href="wishlist.php">❤️ My Wishlist</a>
                 
                 <span class="navbar-divider"></span>
-                <a href="profile.php">My Profile</a>
+                <a href="profile.php">🧏‍♂️ My Profile</a>
                 
                 <span class="navbar-divider"></span>
                 <a href="logout.php">Logout</a>
