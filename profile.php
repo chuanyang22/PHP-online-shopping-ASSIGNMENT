@@ -63,6 +63,9 @@ $user = $stmt->fetch();
             <a href="change_password.php">
                 <button class="auth-btn" style="width: 100%;">CHANGE PASSWORD</button>
             </a>
+            <a href="edit_profile.php">
+                <button class="auth-btn" style="width: 100%;">EDIT PROFILE DETAILS</button>
+            </a>    
         </div>
 
     </div>
