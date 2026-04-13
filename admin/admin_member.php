@@ -1,17 +1,32 @@
 <?php
-// admin_members.php
+// admin_member.php
 session_start();
+
+// FIXED: Removed the "../" so it points to the correct folder!
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
 
-// ONLY ADMINS ALLOWED!
-auth('Admin'); 
+// =======================================================
+// DIRECT SECURITY CHECK
+// =======================================================
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
+    echo "<script>
+            alert('Access Denied: You must be an Admin to view this page.');
+            window.location.href = 'index.php';
+          </script>";
+    exit();
+}
+// =======================================================
 
 // Handle Banning / Unbanning users
 if (isset($_GET['toggle_status']) && isset($_GET['id'])) {
     $member_id = $_GET['id'];
     
-    // Prevent the admin from banning themselves
     if ($member_id != $_SESSION['user_id']) {
         $stmt = $pdo->prepare("SELECT status FROM member WHERE id = ?");
         $stmt->execute([$member_id]);
@@ -23,7 +38,8 @@ if (isset($_GET['toggle_status']) && isset($_GET['id'])) {
             $update_stmt->execute([$new_status, $member_id]);
         }
     }
-    header("Location: admin_members.php");
+    // FIXED: Changed to admin_member.php (No 's')
+    header("Location: admin_member.php");
     exit;
 }
 
@@ -51,10 +67,10 @@ $members = $stmt->fetchAll();
         <a href="index.php" style="color: #0056b3; text-decoration: none; font-weight: bold;">&larr; Back to Home</a>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
-        <form method="GET" action="admin_members.php" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+        <form method="GET" action="admin_member.php" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
             <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search by username or email..." style="padding: 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px;">
-            <button type="submit" class="auth-btn" style="width: auto; padding: 10px 20px; margin-top: 0;">Search</button>
-            <a href="admin_members.php" style="padding: 10px; color: #888; text-decoration: none;">Clear</a>
+            <button type="submit" class="action-btn" style="width: auto; padding: 10px 20px; margin-top: 0;">Search</button>
+            <a href="admin_member.php" style="padding: 10px; color: #888; text-decoration: none;">Clear</a>
         </form>
 
         <table class="admin-table">
@@ -78,9 +94,9 @@ $members = $stmt->fetchAll();
                 <td>
                     <?php if ($m['id'] != $_SESSION['user_id']): ?>
                         <?php if ($m['status'] === 'Active'): ?>
-                            <a href="admin_members.php?toggle_status=1&id=<?= $m['id'] ?>" class="btn-toggle btn-ban" onclick="return confirm('Block this user?');">Block User</a>
+                            <a href="admin_member.php?toggle_status=1&id=<?= $m['id'] ?>" class="btn-toggle btn-ban" onclick="return confirm('Block this user?');">Block User</a>
                         <?php else: ?>
-                            <a href="admin_members.php?toggle_status=1&id=<?= $m['id'] ?>" class="btn-toggle btn-unban">Unblock User</a>
+                            <a href="admin_member.php?toggle_status=1&id=<?= $m['id'] ?>" class="btn-toggle btn-unban">Unblock User</a>
                         <?php endif; ?>
                     <?php else: ?>
                         <em style="color: #888;">(You)</em>

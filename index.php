@@ -35,56 +35,6 @@ $products = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Accessory Store - Home</title>
     <link rel="stylesheet" href="css/mainstyle.css">
-    <style>
-        /* Quick CSS for the product grid to make it look nice */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .product-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .product-image {
-            max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .price {
-            color: #27ae60;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        .btn {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 8px 12px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background: #2980b9;
-        }
-        .search-bar {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .search-bar input {
-            padding: 10px;
-            width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-    </style>
 </head>
 <body style="margin: 0; background-color: #f5f5f5;">
     

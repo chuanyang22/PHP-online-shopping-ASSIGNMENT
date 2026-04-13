@@ -1,4 +1,6 @@
-/* General reset for the entire page */
+/* =========================================
+   PART 1: GENERAL RESET & MAIN LAYOUT
+   ========================================= */
 body {
     margin: 0;
     padding: 0;
@@ -6,7 +8,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* 1. This is the main container - IT CENTERS EVERYTHING */
 .page-container {
     width: 80%;
     max-width: 800px;
@@ -18,7 +19,9 @@ body {
     text-align: center;
 }
 
-/* Styling for the red error message box */
+/* =========================================
+   PART 2: SHARED UI ELEMENTS
+   ========================================= */
 .error-alert {
     color: red; 
     border: 1px solid red; 
@@ -30,45 +33,30 @@ body {
     text-align: center;
 }
 
-/* Styling for links so they look professional */
 .page-container a {
     text-decoration: none;
-    color: #9333EA; /* Updated to Purple */
+    color: #9333EA;
     font-weight: bold;
 }
 .page-container a:hover {
     text-decoration: underline;
 }
 
-/* Headers styling */
-.page-container h2 {
-    margin-top: 0;
+.page-container h2 { 
+    margin-top: 0; 
     color: #333;
 }
-.page-container h3 {
-    color: #555;
-    margin-top: 10px;
+.page-container h3 { 
+    color: #555; 
+    margin-top: 10px; 
     margin-bottom: 10px;
 }
 
-/* Paragraph text styling */
-.page-container p {
-    color: #777;
-    margin: 5px 0;
+.page-container p { 
+    color: #777; 
+    margin: 5px 0; 
 }
 
-/* 2. Styling for the circular profile photo and ensuring IT IS ALSO CENTERED */
-.profile-photo {
-    border-radius: 50%;
-    border: 4px solid #ccc;
-    object-fit: cover;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* 3. A clean class for the horizontal separator, replacing inline styles */
 .page-separator {
     width: 50%;
     border: 0;
@@ -76,10 +64,9 @@ body {
     margin: 30px auto;
 }
 
-/* 4. Professional styling for the action buttons */
 .action-btn {
     padding: 10px 20px;
-    background-color: #38BDF8; /* Updated to Sky Blue */
+    background-color: #38BDF8; 
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -89,124 +76,13 @@ body {
     letter-spacing: 1px;
     transition: background-color 0.3s ease;
 }
-.action-btn:hover {
-    background-color: #0284C7; /* Darker sky blue on hover */
-}
-
-.profile-actions {
-    margin-top: 30px;
-}
+.action-btn:hover { background-color: #0284C7; }
 
 /* =========================================
-   PROFILE PAGE STYLES
-   ========================================= */
-.profile-card {
-    background-color: #fff;
-    width: 100%;
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.profile-pic {
-    display: block;
-    margin: 20px auto;
-    max-width: 200px;
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    background-color: #fafafa;
-}
-
-.profile-info {
-    font-size: 16px;
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.profile-info h3 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.profile-divider {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 20px 0;
-}
-
-/* =========================================
-   UPLOAD PHOTO PAGE STYLES
-   ========================================= */
-.upload-card {
-    background-color: #fff;
-    width: 100%;
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.upload-card h2 {
-    margin-top: 0;
-    color: #333;
-}
-
-#photo-input {
-    margin: 20px 0;
-    font-size: 14px;
-}
-
-/* THE PREVIEW BOX */
-#photo-preview-area {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.preview-box-empty {
-    width: 200px;
-    height: 200px;
-    border: 3px dashed #ddd;
-    border-radius: 8px;
-    background-color: #fafafa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #aaa;
-    margin: 0 auto;
-    font-weight: bold;
-    box-sizing: border-box;
-}
-
-#photo-preview {
-    display: none;
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 3px solid #eee;
-    box-sizing: border-box;
-    margin: 0 auto;
-}
-
-
-/* =========================================
-   TOP NAVIGATION BAR 
+   PART 3: TOP NAVIGATION BAR 
    ========================================= */
 .navbar {
-    background-color: #001D3D; /* Updated to Deep Sea Blue */
+    background-color: #001D3D; 
     color: white;
     display: flex;
     justify-content: space-between;
@@ -228,33 +104,32 @@ body {
     font-size: 14px;
 }
 
-.navbar-profile a {
-    color: white;
-    text-decoration: none;
+.navbar-profile a { 
+    color: white; 
+    text-decoration: none; 
+    transition: color 0.2s ease;
 }
 
-.navbar-profile a:hover {
-    color: #38BDF8; /* Sky blue hover effect */
-}
+.navbar-profile a:hover { 
+    color: #38BDF8;
+ } 
 
 .navbar-divider {
     border-left: 1px solid rgba(255, 255, 255, 0.4);
     height: 14px;
 }
 
-.home-container {
+.home-container { 
     padding: 40px 50px;
-}
-
+ }
 
 /* =========================================
-   AUTHENTICATION PAGES (LOGIN/RESET UI)
+   PART 4: AUTHENTICATION PAGES (LOGIN/RESET UI)
    ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .auth-body {
     font-family: 'Inter', sans-serif;
-    /* CHANGED: Deep Sea Blue Gradient Background */
     background: linear-gradient(135deg, #001D3D 0%, #003566 100%);
     height: 100vh;
     display: flex;
@@ -269,24 +144,24 @@ body {
     max-width: 420px;
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.4); /* Stronger shadow to stand out from dark blue */
+    box-shadow: 0 10px 35px rgba(0,0,0,0.4);
     box-sizing: border-box;
 }
 
-.auth-title {
-    font-size: 26px;
-    font-weight: 700;
-    color: #1f2937;
-    text-align: center;
-    margin-bottom: 10px;
+.auth-title { 
+    font-size: 26px; 
+    font-weight: 700; 
+    color: #1f2937; 
+    text-align: center; 
+    margin-bottom: 10px; 
 }
 
-.auth-subtitle {
-    text-align: center;
-    color: #6b7280;
-    font-size: 14px;
-    margin-bottom: 30px;
-    line-height: 1.5;
+.auth-subtitle { 
+    text-align: center; 
+    color: #6b7280; 
+    font-size: 14px; 
+    margin-bottom: 30px; 
+    line-height: 1.5; 
 }
 
 .auth-input {
@@ -300,16 +175,15 @@ body {
     transition: all 0.3s ease;
     font-family: 'Inter', sans-serif;
 }
-
 .auth-input:focus {
     outline: none;
-    border-color: #9333EA; /* CHANGED: Purple border glow when clicking the text box */
+    border-color: #9333EA; 
     box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15);
 }
 
 .auth-btn {
     width: 100%;
-    background-color: #38BDF8; /* CHANGED: Sky Blue Button */
+    background-color: #38BDF8; 
     color: white;
     padding: 14px;
     border: none;
@@ -323,77 +197,131 @@ body {
     letter-spacing: 0.5px;
     margin-top: 10px;
 }
+.auth-btn:hover { 
+    background-color: #0284C7;}
 
-.auth-btn:hover {
-    background-color: #0284C7; /* CHANGED: Darker Sky Blue on hover */
-}
-
-.auth-footer {
-    text-align: center;
-    margin-top: 25px;
-    font-size: 14px;
+.auth-footer { 
+    text-align: center; 
+    margin-top: 25px; 
+    font-size: 14px; 
     color: #6b7280;
-}
+ }
 
-.auth-footer a {
-    color: #9333EA; /* CHANGED: Purple Link Color (Login/Register/Forgot) */
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s ease;
+.auth-footer a { 
+    color: #9333EA; 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: color 0.2s ease; 
 }
-
-.auth-footer a:hover {
-    color: #7E22CE; /* Darker Purple on hover */
+.auth-footer a:hover { 
+    color: #7E22CE; 
     text-decoration: underline;
+ }
+
+.auth-error { 
+    background-color: #fef2f2; 
+    color: #b91c1c; padding: 12px; 
+    border-radius: 8px; 
+    border: 1px solid #f87171; 
+    margin-bottom: 20px; 
+    font-size: 14px; 
+    text-align: center; 
 }
 
-.auth-error {
-    background-color: #fef2f2;
-    color: #b91c1c;
-    padding: 12px;
+.auth-success { 
+    background-color: #ecfdf5; 
+    color: #047857; 
+    padding: 16px; 
+    border-radius: 8px; 
+    border: 1px solid #6ee7b7; 
+    margin-bottom: 20px; 
+    font-size: 15px; 
+    text-align: center; 
+    line-height: 1.5; 
+}
+
+.remember-me-container { display: flex; 
+    align-items: center; 
+    justify-content: flex-start; 
+    gap: 10px; 
+    margin-bottom: 20px; 
+    font-size: 14px; 
+    color: #6b7280; 
+}
+
+.remember-me-container input[type="checkbox"] { 
+    width: 16px; 
+    height: 16px; 
+    cursor: pointer; 
+    accent-color: #9333EA; 
+}
+
+.remember-me-container label { 
+    cursor: pointer; 
+}
+
+/* =========================================
+   PART 5: PROFILE PAGE STYLES
+   ========================================= */
+.profile-card {
+    background-color: #fff;
+    width: 100%;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
     border-radius: 8px;
-    border: 1px solid #f87171;
-    margin-bottom: 20px;
-    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
     text-align: center;
 }
 
-.auth-success {
-    background-color: #ecfdf5;
-    color: #047857;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #6ee7b7;
-    margin-bottom: 20px;
-    font-size: 15px;
-    text-align: center;
-    line-height: 1.5;
+.profile-pic { 
+    display: block; 
+    margin: 20px auto; 
+    max-width: 200px; 
+    height: auto; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 10px; 
+    background-color: #fafafa; 
 }
 
-/* Styling for Remember Me checkbox */
-.remember-me-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    color: #6b7280;
+.profile-info { 
+    font-size: 16px; 
+    color: #555; 
+    line-height: 1.6; 
+    margin-bottom: 20px; 
 }
 
-.remember-me-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: #9333EA; /* Makes the checkbox purple to match your links */
+.profile-info h3 { 
+    color: #333; 
+    margin-bottom: 10px; 
 }
 
-.remember-me-container label {
-    cursor: pointer;
+.profile-divider { 
+    border: none; 
+    border-top: 1px solid #eee; 
+    margin: 20px 0;
+}
+.profile-photo {
+     border-radius: 50%; 
+     border: 4px solid #ccc; 
+     object-fit: cover; 
+     margin-bottom: 20px; 
+     display: block; 
+     margin-left: auto; 
+     margin-right: auto; 
+     width: 150px; 
+     height: 150px;
+    }
+.profile-actions { 
+    margin-top: 30px; 
+    display: flex; 
+    justify-content: center;
 }
 
 /* =========================================================
-   PROFILE PHOTO WORKSHOP (Circular UI Redesign)
+   PART 6: PROFILE PHOTO WORKSHOP (Circular UI Redesign)
    ========================================================= */
 .workshop-card {
     max-width: 500px;
@@ -405,89 +333,135 @@ body {
     text-align: center;
 }
 
-/* The Circular Avatar Preview */
-.avatar-preview-wrapper {
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 25px auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid #f8f9fa;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+.avatar-preview-wrapper { 
+    width: 160px; 
+    height: 160px; 
+    margin: 0 auto 25px auto; 
+    border-radius: 50%; 
+    overflow: hidden; 
+    border: 4px solid #f8f9fa; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
     background-color: #f1f1f1;
+ }
+
+.avatar-preview-wrapper img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: block; 
 }
 
-.avatar-preview-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Cropper Container */
-.img-to-crop-container {
-    max-height: 400px;
-    overflow: hidden;
+.img-to-crop-container { 
+    max-height: 400px; 
+    overflow: hidden; 
     border-radius: 8px;
     margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1); 
 }
 
-/* Buttons */
-/* Buttons */
-.workshop-btn-group {
-    display: flex;
-    flex-direction: column; /* CHANGED: This stacks the buttons vertically */
-    gap: 12px;
-    margin-bottom: 20px;
+.workshop-btn-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-bottom: 20px; 
+}
+.workshop-btn { 
+    border: none; 
+    padding: 14px 20px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    font-size: 15px; 
+    transition: all 0.2s; 
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
-.workshop-btn {
-    border: none;
-    padding: 14px 20px; /* Made slightly taller to match login buttons */
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.2s;
-    width: 100%; /* CHANGED: Forces buttons to be full width */
-    box-sizing: border-box;
-}
-
-/* The grey upload button */
 .btn-upload { 
-    background-color: #e2e8f0; 
-    color: #334155; 
+     background-color: #e2e8f0; 
+     color: #334155;
 }
+
 .btn-upload:hover { 
     background-color: #cbd5e1; 
 }
 
-/* The green save button */
 .btn-save { 
     background-color: #28a745; 
     color: white; 
-    opacity: 0.5; /* Dimmed until a photo is picked */
-    cursor: not-allowed;
-}
-.btn-save.active {
+    opacity: 0.5; 
+    cursor: not-allowed; }
+
+.btn-save.active { 
     opacity: 1;
-    cursor: pointer;
-}
-.btn-save.active:hover { 
-    background-color: #218838; 
+     cursor: pointer; 
+    }
+
+.btn-save.active:hover {
+     background-color: #218838;
+     }
+
+.cropper-view-box, .cropper-face { 
+    border-radius: 50%; 
 }
 
-/* PRO TRICK: Make the cropping box circular too! */
-.cropper-view-box,
-.cropper-face {
-  border-radius: 50%;
+/* Old Upload Styles */
+.upload-card { 
+    background-color: #fff;
+    width: 100%; 
+    max-width: 400px; 
+    margin: 40px auto; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box; 
+    text-align: center; 
+}
+.upload-card h2 { margin-top: 0; 
+    color: #333;
+ }
+
+#photo-input { 
+    margin: 20px 0; 
+    font-size: 14px; 
 }
 
+#photo-preview-area { 
+    margin-bottom: 20px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%;
+ }
 
+.preview-box-empty { 
+    width: 200px; 
+    height: 200px; 
+    border: 3px dashed #ddd; 
+    border-radius: 8px; 
+    background-color: #fafafa; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    color: #aaa; 
+    margin: 0 auto; 
+    font-weight: bold; 
+    box-sizing: border-box; 
+}
+
+#photo-preview { 
+    display: none; 
+    width: 200px; 
+    height: 200px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+    border: 3px solid #eee; 
+    box-sizing: border-box; 
+    margin: 0 auto; 
+}
 
 /* =========================================================
-   ADMIN MEMBER MANAGEMENT DASHBOARD
+   PART 7: ADMIN MEMBER MANAGEMENT DASHBOARD
    ========================================================= */
 .admin-container { 
     max-width: 900px; 
@@ -495,8 +469,8 @@ body {
     background: white; 
     padding: 30px; 
     border-radius: 8px; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-}
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+ }
 
 .admin-table { 
     width: 100%; 
@@ -504,17 +478,16 @@ body {
     margin-top: 20px; 
 }
 
-.admin-table th, 
-.admin-table td { 
+.admin-table th, .admin-table td { 
     padding: 12px; 
     border: 1px solid #ddd; 
-    text-align: left; 
-}
-
+    text-align: left;
+ }
+ 
 .admin-table th { 
     background-color: #f8f9fa; 
     color: #333;
-}
+ }
 
 .status-active { 
     color: green; 
@@ -523,8 +496,8 @@ body {
 
 .status-blocked { 
     color: red; 
-    font-weight: bold; 
-}
+    font-weight: bold;
+ }
 
 .btn-toggle { 
     padding: 6px 12px; 
@@ -532,12 +505,100 @@ body {
     text-decoration: none; 
     color: white; 
     font-size: 12px; 
-    transition: 0.2s opacity;
+    transition: 0.2s opacity; 
 }
 
-.btn-toggle:hover {
-    opacity: 0.8;
+.btn-toggle:hover { 
+    opacity: 0.8; 
 }
 
-.btn-ban { background-color: #dc3545; }
-.btn-unban { background-color: #28a745; }
+.btn-ban { 
+    background-color: #dc3545;
+ }
+
+.btn-unban { 
+    background-color: #28a745; 
+}
+
+/* =========================================================
+   PART 8: PRODUCT GRID & SEARCH (Moved from index.php)
+   ========================================================= */
+.product-grid {
+     display: flex; 
+     flex-wrap: wrap; 
+     gap: 20px; 
+     justify-content: center; 
+     margin-top: 20px; 
+    }
+
+.product-card {
+    background: white; 
+    border-radius: 8px; 
+    padding: 15px; 
+    width: 250px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    text-align: center; 
+}
+.product-image { 
+    width: 100%; 
+    height: 200px; 
+    object-fit: cover; 
+    border-radius: 5px; 
+}
+
+.btn { 
+    display: inline-block; 
+    padding: 10px 15px; 
+    background: #0079fb; 
+    color: white; 
+    text-decoration: none; 
+    border-radius: 5px; 
+    margin-top: 10px; 
+    cursor: pointer; 
+    border: none; 
+}
+
+.btn:hover { 
+    background: #0051ff; 
+}
+
+.price { 
+    font-size: 1.2em; 
+    font-weight: bold; 
+    color: #1c1b1f; 
+    margin: 10px 0;
+ }
+
+.search-bar {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    justify-content: none;
+    align-items: none;
+    gap: 10px; /* Space between the text box and the buttons */
+}
+
+/* Makes the text input box much larger */
+.search-bar input[type="text"] {
+    width: 400px; /* INCREASE THIS to make the box longer (e.g., 600px) */
+    padding: 10px 15px; /* Makes the box taller */
+    font-size: 18px; /* Makes the text inside larger */
+    border: 2px solid #ccc;
+    border-radius: 8px; /* Rounded corners */
+    outline: none;
+    transition: 0.3s;
+}
+
+/* Adds a nice purple glow when someone clicks the search box */
+.search-bar input[type="text"]:focus {
+    border-color: #9333EA;
+    box-shadow: 0 0 8px rgba(147, 51, 234, 0.3);
+}
+
+/* Adjusts the search buttons to match the new large size */
+.search-bar .btn {
+    padding: 10px 25px; /* Makes the button taller and wider */
+    font-size: 16px; /* Larger button text */
+    border-radius: 8px;
+    margin-top: 0; 
+}
