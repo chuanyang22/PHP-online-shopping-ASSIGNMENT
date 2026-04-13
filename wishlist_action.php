@@ -13,15 +13,20 @@ $action = $_POST['action'] ?? '';
 
 if ($product_id && $action) {
     if ($action === 'add') {
+        // 1. Check if it is already in the wishlist
         $stmt = $pdo->prepare("SELECT id FROM wishlist WHERE member_id = ? AND product_id = ?");
         $stmt->execute([$user_id, $product_id]);
         
         if ($stmt->rowCount() == 0) {
+            // 2. If it is NOT there, insert it and show the success message
             $insert = $pdo->prepare("INSERT INTO wishlist (member_id, product_id) VALUES (?, ?)");
             $insert->execute([$user_id, $product_id]);
+            
+            $_SESSION['popup'] = "❤️ Item saved to your wishlist!";
+        } else {
+            // 3. If it IS already there, show the specific alert message instead
+            $_SESSION['popup'] = "ℹ️ This item is already inside your wishlist!";
         }
-        // Save the popup message
-        $_SESSION['popup'] = "❤️ Item saved to your wishlist!";
         
     } elseif ($action === 'remove') {
         $delete = $pdo->prepare("DELETE FROM wishlist WHERE member_id = ? AND product_id = ?");

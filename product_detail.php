@@ -14,6 +14,8 @@ if (isset($_SESSION['user_id'])) {
     $w_stmt = $pdo->prepare("SELECT id FROM wishlist WHERE member_id = ? AND product_id = ?");
     $w_stmt->execute([$_SESSION['user_id'], $product_id]);
     $in_wishlist = $w_stmt->rowCount() > 0;
+    // Check if this item is already in the cart session
+    $cart_qty = isset($_SESSION['cart'][$product_id]) ? $_SESSION['cart'][$product_id] : 0;
 }
 
 try {
@@ -106,6 +108,18 @@ try {
         <?php endif; ?>
     </div>
 
+    <?php if ($cart_qty > 0): ?>
+        <div style="background: #e1f5fe; color: #0277bd; padding: 10px; border-radius: 5px; margin-top: 15px; font-weight: bold; text-align: center; border-left: 4px solid #03a9f4;">
+            🛒 This item is already inside your cart (Qty: <?= $cart_qty ?>)
+        </div>
+    <?php endif; ?>
+
+    <?php if ($in_wishlist): ?>
+        <div style="background: #fce4ec; color: #c2185b; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; text-align: center; border-left: 4px solid #e91e63;">
+            ❤️ This item is already inside your wishlist
+        </div>
+    <?php endif; ?>
+
     <?php if ($product['stock_quantity'] > 0): ?>
         <form action="cart.php" method="POST" style="margin-top: 25px;">
             <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
@@ -138,20 +152,20 @@ try {
 </body>
 
 <?php if (isset($_SESSION['popup'])): ?>
-        <div id="toast-message" style="position: fixed; top: 20px; right: 20px; background: #2c3e50; color: white; padding: 15px 25px; border-radius: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 9999; font-weight: bold; transition: opacity 0.5s ease; border-left: 5px solid #2ecc71;">
-            <?= htmlspecialchars($_SESSION['popup']) ?>
-        </div>
-        <script>
-            // Automatically fade out and remove the popup after 3 seconds
-            setTimeout(() => {
-                let toast = document.getElementById('toast-message');
-                if(toast) {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 500);
-                }
-            }, 3000);
-        </script>
-        <?php unset($_SESSION['popup']); // Clear it so it doesn't show up again on refresh ?>
-    <?php endif; ?>
+    <div id="toast-message" style="position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 9999; font-weight: bold; font-size: 1em; text-align: center; transition: opacity 0.5s ease; border-top: 4px solid #2ecc71;">
+        <?= htmlspecialchars($_SESSION['popup']) ?>
+    </div>
+    <script>
+        // Automatically fade out and remove the popup after 3 seconds
+        setTimeout(() => {
+            let toast = document.getElementById('toast-message');
+            if(toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 3000);
+    </script>
+    <?php unset($_SESSION['popup']); // Clear it so it doesn't show up again on refresh ?>
+<?php endif; ?>
 
 </html>
