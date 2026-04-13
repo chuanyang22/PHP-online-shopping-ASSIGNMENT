@@ -131,6 +131,14 @@ $products = $stmt->fetchAll();
                         <p class="price">$<?= number_format($product['price'], 2) ?></p>
                         
                         <a href="product_detail.php?id=<?= $product['id'] ?>" class="btn">View Details</a>
+
+                        <a href="product_detail.php?id=<?= $product['id'] ?>" class="btn">View Details</a>
+
+                        <form action="wishlist_action.php" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                            <input type="hidden" name="action" value="add">
+                            <button type="submit" class="btn" style="background: #9b59b6;">❤️ Save</button>
+                        </form>
                     </div>
                 <?php endforeach; ?>
             </div>
