@@ -483,3 +483,59 @@ body {
 .cropper-face {
   border-radius: 50%;
 }
+
+
+
+/* =========================================================
+   ADMIN DASHBOARD STYLES
+   ========================================================= */
+.admin-container { 
+    max-width: 900px; 
+    margin: 40px auto; 
+    background: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+}
+
+.admin-container table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px; 
+}
+
+.admin-container th, 
+.admin-container td { 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    text-align: left; 
+}
+
+.admin-container th { 
+    background-color: #f8f9fa; 
+}
+
+.status-active { 
+    color: green; 
+    font-weight: bold; 
+}
+
+.status-blocked { 
+    color: red; 
+    font-weight: bold; 
+}
+
+.btn-toggle { 
+    padding: 6px 12px; 
+    border-radius: 4px; 
+    text-decoration: none; 
+    color: white; 
+    font-size: 12px; 
+    display: inline-block;
+}
+
+.btn-ban { background-color: #dc3545; }
+.btn-ban:hover { background-color: #c82333; }
+
+.btn-unban { background-color: #28a745; }
+.btn-unban:hover { background-color: #218838; }
