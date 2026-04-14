@@ -67,23 +67,23 @@ $members = $stmt->fetchAll();
         .member-table td { 
             vertical-align: middle; 
             padding: 15px 10px; 
-    }
-        .member-table th { 
-            padding: 15px 10px; 
         }
 
+        .member-table th { 
+            padding: 15px 10px;
+         }
         .status-badge { 
             padding: 5px 10px; 
             border-radius: 20px; 
             font-weight: bold; 
             font-size: 0.85em; 
-            text-transform: uppercase;
-         }
+            text-transform: uppercase; 
+        }
 
         .active-badge { 
             background-color: #d1fae5; 
-            color: #065f46;
-         }
+            color: #065f46; 
+        }
 
         .blocked-badge { 
             background-color: #fee2e2; 
@@ -93,10 +93,11 @@ $members = $stmt->fetchAll();
         .navbar-search { 
             background-color: #f0fdf4; 
             padding: 20px; 
-            border-left: 5px solid #22c55e; 
+            border-left: 5px solid #22c55e;
             border-radius: 8px;
-             margin-bottom: 30px; 
-            }
+            margin-bottom: 30px; 
+        }
+        
     </style>
 </head>
 <body style="margin: 0; background-color: #1e3a8a; font-family: 'Segoe UI', sans-serif;">
