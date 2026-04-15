@@ -137,17 +137,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3 style="text-align: right; margin-top: 20px; color: #27ae60;">Total: $<?= number_format($cart_total, 2) ?></h3>
             </div>
 
-            <form action="checkout.php" method="POST">
+            <form id="checkout-form" action="checkout.php" method="POST">
                 <div class="form-group">
                     <label for="shipping_address">Shipping Address</label>
                     <textarea name="shipping_address" id="shipping_address" placeholder="Enter your full street address, city, and zip code..." required></textarea>
                 </div>
                 
-                <button type="submit" class="btn-submit">Confirm & Place Order</button>
+                <div id="paypal-button-container" style="margin-top: 20px;"></div>
             </form>
 
         <?php endif; ?>
     </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AUs-N0E4V8HRGsAx54opyGxI2UXVk2npBD7c2ArivbMkaTdIPhls9vHk6A_I8ikJNAWpv05tQ7OqS1sk&currency=MYR"></script>
+    
+    <script>
+        paypal.Buttons({
+            // Step A: Make sure they typed an address BEFORE opening the PayPal popup
+            onClick: function(data, actions) {
+                let address = document.getElementById('shipping_address').value.trim();
+                if (address === '') {
+                    alert('Please enter your shipping address before paying.');
+                    return actions.reject(); // Stops the popup from opening
+                }
+                return actions.resolve(); // Allows the popup to open
+            },
+
+            // Step B: Pass your actual PHP cart total to PayPal
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            // number_format ensures it is always formatted as 0.00 without commas, which PayPal requires
+                            value: '<?= number_format($cart_total, 2, '.', '') ?>' 
+                        }
+                    }]
+                });
+            },
+
+            // Step C: What to do when the buyer successfully pays
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    
+                    // The payment is complete! 
+                    // Now we magically click the hidden form submit so your PHP saves the order to the database
+                    document.getElementById('checkout-form').submit();
+                    
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
 
 </body>
 </html>
