@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $_SESSION['cart'] = [];
     
     // Send them to the success view
-    header("Location: payment.php?order_id=$order_id&success=1");
+    header("Location: member/order_history.php");
     exit();
 }
 ?>
