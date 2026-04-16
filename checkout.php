@@ -67,12 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Commit the transaction to save everything permanently
             $pdo->commit();
-
-            // Step C: Empty the cart session
-            $_SESSION['cart'] = [];
             
-            // Set success message
-            $success = "Order placed successfully! Your Order ID is #$order_id.";
+            // Redirect the user straight to the new payment module
+            header("Location: payment.php?order_id=" . $order_id);
+            exit();
 
         } catch (Exception $e) {
             $pdo->rollBack(); // Undo any partial database changes
@@ -149,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
     </div>
 
-    <script src="https://www.paypal.com/sdk/js?client-id=AUs-N0E4V8HRGsAx54opyGxI2UXVk2npBD7c2ArivbMkaTdIPhls9vHk6A_I8ikJNAWpv05tQ7OqS1sk&currency=MYR"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AUs-N0E4V8HRGsAx54opyGxI2UXVk2npBD7c2ArivbMkaTdIPhls9vHk6A_I8ikJNAWpv05tQ7OqS1sk&currency=MYR&disable-funding=card"></script>
     
     <script>
         paypal.Buttons({
