@@ -124,29 +124,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/mainstyle.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/login.js"></script>
-    <title>Log In - Online Accessory Store</title>
+    <link rel="stylesheet" href="css/mainstyle.css">
 </head>
 <body class="auth-body">
     <div class="auth-card">
-        <div class="auth-title">Log In</div>
-        
-        <p style="text-align: center; color: #121010; margin-bottom: 20px; font-size: 14px; box-shadow: 0 5px 5px rgba(58, 36, 36, 0.1); padding: 15px; border-radius: 4px;">
+        <div class="auth-title">Welcome Back</div>
+
+          <p class="auth-subtitle">
             Please enter your email or username and password to log in.
         </p>
 
-        <?php if (!empty($errors['general'])): ?>
-            <div class="auth-error" style="color: red; background-color: #fdd; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center;">
+        <?php if (isset($errors['general'])): ?>
+            <div class="auth-error-box">
                 <?= $errors['general'] ?>
             </div>
         <?php endif; ?>
 
         <form method="POST" action="login.php" autocomplete="off">
-            <input type="text" style="display:none">
-            <input type="password" style="display:none">
+            <input type="text" class="hidden-input">
+            <input type="password" class="hidden-input">
 
             <input type="text" name="login_id" class="auth-input" placeholder="Email or Username" required autocomplete="one-time-code" value="<?= htmlspecialchars($_POST['login_id'] ?? '') ?>">
             <input type="password" name="password" class="auth-input" placeholder="Password" required autocomplete="new-password">
@@ -159,14 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="auth-btn">Log In</button>
         </form>
 
-        <div class="auth-footer" style="margin-top: 20px; text-align: center; font-size: 14px;">
-            New to Online Accessory Store? <a href="register.php" style="color: #0056b3; text-decoration: underline;">Sign Up</a>
+        <div class="auth-footer-text">
+            New to Online Accessory Store? <a href="register.php" class="link-primary">Sign Up</a>
             <br><br>
-            <a href="forgot_password.php" style="color: #ee4d2d; font-weight: bold; text-decoration: none;">Forgot Password or Account Blocked?</a>
+            <a href="forgot_password.php" class="link-danger">Forgot Password or Account Blocked?</a>
             
             <br><br>
-            <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
-            <a href="admin/login.php" style="color: #666; font-size: 13px; text-decoration: none; font-weight: bold;">🛡️ Log in as Admin</a>
+            <hr class="auth-divider">
+            <a href="../admin/login.php" class="link-primary">🛡️ Log in as Admin</a>
         </div>
     </div>
 </body>

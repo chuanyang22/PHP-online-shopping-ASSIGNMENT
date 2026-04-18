@@ -7,7 +7,7 @@ $success_msg = '';
 
 // NEW: Catch the success message after the page refreshes!
 if (isset($_GET['success']) && $_GET['success'] == 1) {
-    $success_msg = "Congratulations, you have successfully registered! <br><a href='login.php' style='color: #0056b3; font-weight: bold;'>Click here to Log In</a>";
+    $success_msg = "Congratulations, you have successfully registered! <br><a href='login.php' class='auth-link-bold'>Click here to Log In</a>";
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -78,27 +78,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Create Account</title>
     <link rel="stylesheet" href="css/mainstyle.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="js/register.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
 </head>
-
 <body class="auth-body">
-
     <div class="auth-card">
-        <div class="auth-title">Sign Up</div>
+        <div class="auth-title">Create Account</div>
 
         <?php if (!empty($success_msg)): ?>
-            <div style="color: #155724; background-color: #d4edda; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px;">
+            <div class="auth-success-box">
                 <?= $success_msg ?>
             </div>
         <?php endif; ?>
 
         <?php if (!empty($errors)): ?>
-            <div style="color: #ff132a; background-color: #f8d7da; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; text-align: left;">
-                <ul style="margin: 0; padding-left: 20px;">
+            <div class="auth-error-box">
+                <ul class="auth-error-list">
                     <?php foreach ($errors as $error): ?>
                         <li><?= htmlspecialchars($error) ?></li>
                     <?php endforeach; ?>
@@ -108,20 +103,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form method="POST" action="register.php">
             <input type="text" name="username" class="auth-input" placeholder="Username" value="<?= isset($username) ? htmlspecialchars($username) : '' ?>">
-            
             <input type="email" name="email" class="auth-input" placeholder="Email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
-            
             <input type="password" name="password" class="auth-input" placeholder="Password">
-            
             <input type="password" name="confirm_password" class="auth-input" placeholder="Confirm Password">
             
             <button type="submit" class="auth-btn">NEXT</button>
         </form>
 
-        <div class="auth-footer">
-            Have an account? <a href="login.php">Log In</a>
+        <div class="auth-footer-text">
+            Already have an account? <a href="login.php" class="link-primary">Login</a>
+            <br><br>
+            <a href="index.php" class="link-primary">Return to Store</a>
         </div>
     </div>
-
 </body>
 </html>

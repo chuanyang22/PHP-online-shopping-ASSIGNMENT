@@ -13,7 +13,7 @@ require_once 'lib/helpers.php';
     <title>Online Accessory Store - Home</title>
     <link rel="stylesheet" href="css/mainstyle.css">
 </head>
-<body style="margin: 0; background-color: #f5f5f5;">
+<body class="home-body">
     
     <div class="navbar">
         <div class="navbar-brand">

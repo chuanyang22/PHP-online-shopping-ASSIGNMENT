@@ -43,32 +43,24 @@ if (isset($_GET['action']) && $_GET['action'] === 'complete_payment') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Payment</title>
     <link rel="stylesheet" href="css/mainstyle.css">
-    <style>
-        .payment-container { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .amount { font-size: 2.5em; color: #27ae60; font-weight: bold; margin: 20px 0; }
-    </style>
 </head>
-<body style="margin: 0; background-color: #f5f5f5;">
-
-    <div class="navbar">
-        <div class="navbar-brand">
-            <a href="index.php">🛍️ Online Store</a>
-        </div>
-    </div>
-
-    <div class="payment-container">
+<body class="payment-body">
+    <div class="payment-card">
         
-        <?php if ($order['status'] === 'Completed'): ?>
-            <h2>This order has already been paid!</h2>
-            <br>
-            <a href="member/order_history.php">View My Orders</a>
-
+        <?php if (!isset($order) || !$order): ?>
+            <div class="payment-error">
+                <h2>Order Not Found.</h2>
+                <a href="index.php" class="link-primary">Go Home</a>
+            </div>
         <?php else: ?>
-            <h2>Complete Your Payment</h2>
-            <p>Order ID: #<?= htmlspecialchars($order_id) ?></p>
-            
-            <div class="amount">Total: RM <?= number_format($order['total_amount'], 2) ?></div>
-            
+
+            <h2 class="payment-title">Secure Checkout</h2>
+            <p class="payment-subtitle">Order #<?= htmlspecialchars($order_id) ?></p>
+
+            <div class="payment-amount">
+                $<?= number_format($order['total_amount'], 2) ?>
+            </div>
+
             <div id="paypal-button-container"></div>
 
             <script src="https://www.paypal.com/sdk/js?client-id=AUs-N0E4V8HRGsAx54opyGxI2UXVk2npBD7c2ArivbMkaTdIPhls9vHk6A_I8ikJNAWpv05tQ7OqS1skE&currency=USD"></script>
@@ -84,8 +76,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'complete_payment') {
                         });
                     },
                     onApprove: function(data, actions) {
-                        // BULLETPROOF FIX: We bypass the capture step so the MYR currency conversion doesn't freeze the Sandbox!
-                        // The moment the user clicks "Pay", we instantly force the browser to run your PHP success code.
                         window.location.href = "payment.php?order_id=<?= htmlspecialchars($order_id) ?>&action=complete_payment";
                     },
                     onCancel: function (data) {

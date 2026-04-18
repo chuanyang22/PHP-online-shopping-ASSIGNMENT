@@ -3,7 +3,6 @@ require_once '../lib/auth.php';
 require_once '../lib/db.php';
 require_once '../lib/helpers.php';
 
-// 1. Get Chart Data
 $stmt = $pdo->query("
     SELECT p.name, SUM(oi.quantity) as total_sold 
     FROM order_items oi 
@@ -21,61 +20,57 @@ foreach ($chart_data as $row) {
     $values[] = $row['total_sold'];
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../css/mainstyle.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/mainstyle.css"
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body style="background: #f4f7f6; padding: 20px;">
+<body class="admin-body">
+<div class="admin-layout">
 
-    <div style="display: flex; align-items: center; margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-        <a href="dashboard.php" style="text-decoration: none; margin-right: 10px;">
-            <button type="button" class="btn-green" style="background:#27ae60; color:white; border:none; padding:10px; border-radius:5px;">📊 Dashboard</button>
-        </a>
-        <a href="order_list.php" style="text-decoration: none; margin-right: 10px;">
-            <button type="button" class="btn-green" style="background:#27ae60; color:white; border:none; padding:10px; border-radius:5px;">📦 Manage Orders</button>
-        </a>
-        <a href="products_crud.php" style="text-decoration: none; margin-right: 10px;">
-            <button type="button" class="btn-green" style="background:#27ae60; color:white; border:none; padding:10px; border-radius:5px;">🛒 Manage Products</button>
-        </a>
-        <a href="logout.php" style="text-decoration: none; margin-left: auto;">
-            <button type="button" class="btn-red" style="background:#e74c3c; color:white; border:none; padding:10px; border-radius:5px;">🚪 Log Out</button>
-        </a>
-    </div>
+    <?php require_once 'admin_sidebar.php'; ?>
 
-    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-        <h3 style="color: #34495e;">🔥 Top Selling Products</h3>
-        
-        <?php if(empty($labels)): ?>
-            <div style="text-align: center; padding: 50px;">
-                <p style="color: #95a5a6; font-size: 1.2em;">No sales recorded yet.</p>
-                <p style="color: #bdc3c7;">Try placing an order as a member first!</p>
-            </div>
-        <?php else: ?>
-            <canvas id="sellingChart" style="max-height: 400px;"></canvas>
-        <?php endif; ?>
-    </div>
+    <main class="admin-main">
+        <div class="dashboard-chart-card">
 
-    <script>
-        <?php if(!empty($labels)): ?>
-        const ctx = document.getElementById('sellingChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($labels); ?>,
-                datasets: [{
-                    label: 'Units Sold',
-                    data: <?php echo json_encode($values); ?>,
-                    backgroundColor: '#1dee12',
-                    borderRadius: 5
-                }]
-            },
-            options: { responsive: true, scales: { y: { beginAtZero: true } } }
-        });
-        <?php endif; ?>
-    </script>
+            <h2 class="dashboard-title mt-0 mb-20">📊 Dashboard — Top Selling Products</h2>
+
+            <?php if (empty($labels)): ?>
+                <div class="empty-chart-state">
+                    <p class="empty-chart-text-1">No sales recorded yet.</p>
+                    <p class="empty-chart-text-2">Try placing an order as a member first!</p>
+                </div>
+            <?php else: ?>
+                <canvas id="sellingChart" class="chart-canvas"></canvas>
+            <?php endif; ?>
+
+        </div>
+    </main>
+
+</div><!-- /.admin-layout -->
+
+<script>
+    <?php if (!empty($labels)): ?>
+    const ctx = document.getElementById('sellingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($labels) ?>,
+            datasets: [{
+                label: 'Total Sold',
+                data: <?= json_encode($values) ?>,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor:     'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+    <?php endif; ?>
+</script>
 </body>
 </html>

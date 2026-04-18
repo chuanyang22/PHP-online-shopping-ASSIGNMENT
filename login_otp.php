@@ -77,22 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="auth-body">
     <div class="auth-card">
         <div class="auth-title">Enter Login Code</div>
-        <p style="text-align: center; color: #555; margin-bottom: 20px; font-size: 14px;">Please enter the 6-digit code sent to your email. It expires in 5 minutes.</p>
+        <p class="otp-instruction">Please enter the 6-digit code sent to your email. It expires in 5 minutes.</p>
 
         <?php if (isset($errors['general'])): ?>
-            <div class="auth-error">
+            <div class="auth-error-box">
                 <?= $errors['general'] ?>
             </div>
         <?php endif; ?>
 
         <form method="POST" action="login_otp.php">
-            <input type="text" name="otp_code" class="auth-input" placeholder="6-Digit Code" required style="text-align: center; letter-spacing: 5px; font-weight: bold; font-size: 1.2em;">
-            <button type="submit" class="auth-btn">CONFIRM LOGIN</button>
+            <input type="text" name="otp_code" class="auth-input otp-input" placeholder="6-Digit Code" required>
+            <button type="submit" class="auth-btn">VERIFY CODE</button>
         </form>
-
-        <div class="auth-footer">
-            <a href="login.php">Back to login</a>
-        </div>
     </div>
 </body>
 </html>

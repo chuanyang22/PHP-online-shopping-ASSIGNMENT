@@ -62,133 +62,141 @@ if (!empty($user['profile_photo']) && file_exists('uploads/' . $user['profile_ph
     $display_photo = "https://ui-avatars.com/api/?name=" . urlencode($user['username']) . "&size=200&background=random&color=fff";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/mainstyle.css?v=<?php echo time(); ?>">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Photo Workshop</title>
+
+    <!-- Shared site styles (auth-body background, auth-error-box, etc.) -->
+    <link rel="stylesheet" href="css/mainstyle.css">
+
+    <!-- Page-specific styles for the photo workshop -->
+    <link rel="stylesheet" href="css/upload_photo.css">
+
+    <!-- Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Photo Workshop - Online Accessory Store</title>
 </head>
 <body class="auth-body">
+
     <div class="workshop-card">
-        <h2 style="color: #333; margin-top: 0; margin-bottom: 10px;">Profile Photo Workshop</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 25px;">
+
+        <h2 class="workshop-title">Profile Photo Workshop</h2>
+        <p class="workshop-subtitle">
             Select a new image below. You will be able to crop it perfectly in the next step.
         </p>
 
-        <?php if (!empty($error_msg)): ?><div class="auth-error" style="color: red; margin-bottom: 15px;"><?= $error_msg ?></div><?php endif; ?>
+        <?php if (!empty($error_msg)): ?>
+            <div class="workshop-error"><?= htmlspecialchars($error_msg) ?></div>
+        <?php endif; ?>
 
+        <!-- Step 1: Shows current profile photo -->
         <div id="initial-view">
             <div class="avatar-preview-wrapper">
                 <img src="<?= htmlspecialchars($display_photo) ?>" alt="Current Profile Photo">
             </div>
         </div>
 
-        <div id="cropper-view" style="display: none;">
+        <!-- Step 2: Hidden until a file is selected; shows the cropper -->
+        <div id="cropper-view" class="cropper-view">
             <div class="img-to-crop-container">
-                <img id="image_to_crop_element" src="" style="max-width: 100%;">
+                <img id="image_to_crop_element" class="cropper-img" src="" alt="Image to crop">
             </div>
         </div>
 
+        <!-- Buttons -->
         <div class="workshop-btn-group">
-            <button type="button" class="workshop-btn btn-upload" id="btn-upload" onclick="document.getElementById('photo_input').click();">
+            <button type="button" class="workshop-btn btn-upload" id="btn-upload"
+                    onclick="document.getElementById('photo_input').click();">
                 📷 UPLOAD PHOTO
             </button>
-            <button type="button" class="workshop-btn btn-save" id="save-crop">
-                SAVE PROFILE PHOTO
+            <button type="button" class="workshop-btn btn-save-workshop" id="save-crop">
+                ✅ SAVE PROFILE PHOTO
             </button>
         </div>
 
-        <a href="profile.php" style="color: #3300ff; text-decoration: underline; font-size: 14px; display: inline-block; margin-top: 5px;">Cancel and go back</a>
+        <a href="profile.php" class="workshop-cancel-link">Cancel and go back</a>
 
-        <input type="file" id="photo_input" accept="image/*" style="display: none;">
-        <form method="POST" action="upload_photo.php" id="final_crop_form" style="display: none;">
+        <!-- Hidden: file picker & POST form -->
+        <input type="file" id="photo_input" accept="image/*" class="hidden-file-input">
+        <form method="POST" action="upload_photo.php" id="final_crop_form" class="hidden-form">
             <input type="hidden" name="crop_data_base64" id="crop_data_base64_field">
         </form>
-    </div>
+
+    </div><!-- /.workshop-card -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var photoInput = document.getElementById('photo_input');
-            var initialView = document.getElementById('initial-view');
-            var cropperView = document.getElementById('cropper-view');
-            var imageToCropElement = document.getElementById('image_to_crop_element');
-            
-            var btnUpload = document.getElementById('btn-upload');
-            var saveCropButton = document.getElementById('save-crop');
-            
-            var cropDataBase64Field = document.getElementById('crop_data_base64_field');
-            var finalCropForm = document.getElementById('final_crop_form');
-            var cropperInstance = null;
+        document.addEventListener('DOMContentLoaded', function () {
+            var photoInput        = document.getElementById('photo_input');
+            var initialView       = document.getElementById('initial-view');
+            var cropperView       = document.getElementById('cropper-view');
+            var imageToCropEl     = document.getElementById('image_to_crop_element');
+            var btnUpload         = document.getElementById('btn-upload');
+            var saveCropButton    = document.getElementById('save-crop');
+            var cropDataField     = document.getElementById('crop_data_base64_field');
+            var finalCropForm     = document.getElementById('final_crop_form');
+            var cropperInstance   = null;
 
-            // 1. User picks a file
-            photoInput.addEventListener('change', function(e) {
+            // Step 1 — User picks a file
+            photoInput.addEventListener('change', function (e) {
                 var file = e.target.files[0];
                 if (!file) return;
 
                 var reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    // Switch views
-                    initialView.style.display = 'none';
-                    cropperView.style.display = 'block';
-                    
-                    // Update buttons
-                    btnUpload.innerHTML = '🔄 CHANGE PHOTO';
-                    saveCropButton.classList.add('active'); // Turn the save button fully green
 
-                    imageToCropElement.onload = function() {
+                reader.onload = function (event) {
+                    // Swap views
+                    initialView.style.display = 'none';
+                    cropperView.style.display  = 'block';
+
+                    // Enable the save button
+                    btnUpload.innerHTML = '🔄 CHANGE PHOTO';
+                    saveCropButton.classList.add('active');
+
+                    // Init cropper once the image has loaded
+                    imageToCropEl.onload = function () {
                         try {
                             if (cropperInstance) { cropperInstance.destroy(); }
-                            
-                            cropperInstance = new Cropper(imageToCropElement, {
-                                aspectRatio: 1,      // Forces perfect square/circle
-                                viewMode: 1,         // Restricts box inside image
-                                dragMode: 'move',    // Drag the image
-                                autoCropArea: 0.9,   // Starts big
-                                movable: true,
-                                zoomable: true,
-                                rotatable: false,
-                                scalable: false
+
+                            cropperInstance = new Cropper(imageToCropEl, {
+                                aspectRatio:  1,       // Perfect square → circle
+                                viewMode:     1,       // Crop box stays inside image
+                                dragMode:    'move',   // Drag image, not box
+                                autoCropArea: 0.9,
+                                movable:      true,
+                                zoomable:     true,
+                                rotatable:    false,
+                                scalable:     false
                             });
                         } catch (err) {
-                            alert("Cropping tool failed to load. Please ensure you are connected to the internet.");
+                            alert('Cropping tool failed to load. Please ensure you are connected to the internet.');
                         }
                     };
-                    
-                    imageToCropElement.src = event.target.result; 
+
+                    imageToCropEl.src = event.target.result;
                 };
 
-                reader.onerror = function() {
-                    alert("Your browser could not read this file. Please try a different image.");
+                reader.onerror = function () {
+                    alert('Your browser could not read this file. Please try a different image.');
                 };
 
                 reader.readAsDataURL(file);
             });
 
-            // 2. User clicks Save
-            saveCropButton.addEventListener('click', function() {
-                // If they haven't uploaded an image yet, do nothing
+            // Step 2 — User clicks Save
+            saveCropButton.addEventListener('click', function () {
                 if (!saveCropButton.classList.contains('active') || !cropperInstance) {
-                    return; 
+                    return; // Nothing loaded yet
                 }
 
-                var canvas = cropperInstance.getCroppedCanvas({
-                    width: 400,
-                    height: 400
-                });
-                
-                var base64data = canvas.toDataURL('image/jpeg', 0.9);
-                cropDataBase64Field.value = base64data;
+                var canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400 });
+                cropDataField.value = canvas.toDataURL('image/jpeg', 0.9);
                 finalCropForm.submit();
             });
         });
     </script>
+
 </body>
 </html>

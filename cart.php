@@ -92,18 +92,8 @@ if (!empty($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Shopping Cart</title>
     <link rel="stylesheet" href="css/mainstyle.css">
-    <style>
-        .cart-container { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        .cart-img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; vertical-align: middle; margin-right: 10px; }
-        .btn-small { background: #34495e; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-        .btn-remove { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-        .cart-summary { text-align: right; font-size: 1.2em; }
-        .btn-checkout { background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px; font-weight: bold; }
-    </style>
 </head>
-<body style="margin: 0; background-color: #f5f5f5;">
+<body class="cart-body">
 
     <div class="navbar">
         <div class="navbar-brand">

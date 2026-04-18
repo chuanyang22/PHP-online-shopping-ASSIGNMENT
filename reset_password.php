@@ -24,7 +24,7 @@ if (isset($_GET['token'])) {
         $token_valid = true;
         $user_id = $user['id'];
     } else {
-        $error_msg = "This link is invalid or has expired. <a href='forgot_password.php' style='color: #ee4d2d; font-weight: bold;'>Request a new one</a>.";
+        $error_msg = "This link is invalid or has expired. <a href='forgot_password.php' class='auth-link-danger'>Request a new one</a>.";
     }
 } else {
     $error_msg = "No reset token provided. Please use the link sent to your email.";
@@ -60,30 +60,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valid) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set New Password - Online Accessory Store</title>
+    <title>Reset Password</title>
     <link rel="stylesheet" href="css/mainstyle.css">
 </head>
 <body class="auth-body">
     <div class="auth-card">
-        <div class="auth-title">Set New Password</div>
-        
+        <div class="auth-title">Reset Password</div>
+
         <?php if (!empty($error_msg)): ?>
-            <div class="auth-error" style="color: red; background-color: #fdd; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center;">
+            <div class="auth-error-box">
                 <?= $error_msg ?>
             </div>
         <?php endif; ?>
 
         <?php if (!empty($success_msg)): ?>
-            <div class="auth-success" style="color: green; background-color: #dfd; border: 1px solid green; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center;">
+            <div class="auth-success-box">
                 <?= $success_msg ?>
             </div>
             <br>
-            <a href="login.php" class="auth-btn" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">GO TO LOGIN</a>
+            <a href="login.php" class="auth-btn btn-block-link">GO TO LOGIN</a>
         <?php endif; ?>
 
         <?php if ($token_valid): ?>
-            <div class="auth-subtitle" style="text-align: center; margin-bottom: 15px;">
+            <div class="auth-subtitle">
                 Please enter your new professional password below. This must be a minimum of 8 characters.
             </div>
             <form method="POST" action="reset_password.php?token=<?= htmlspecialchars($token) ?>">
@@ -95,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $token_valid) {
         <?php endif; ?>
 
         <?php if (!$token_valid && empty($success_msg)): ?>
-            <div class="auth-footer" style="margin-top: 20px; text-align: center;">
-                <a href="login.php" style="color: #0056b3;">Back to Login</a>
+            <div class="auth-footer-text">
+                <a href="login.php" class="link-primary">Back to Login</a>
             </div>
         <?php endif; ?>
     </div>

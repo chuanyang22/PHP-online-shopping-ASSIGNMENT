@@ -119,9 +119,8 @@ body {
     height: 14px;
 }
 
-.home-container { 
-    padding: 40px 50px;
- }
+/* NOTE: .home-container was also declared here (padding: 40px 50px only).
+   It has been removed — the full definition is in PART 13: HOMEPAGE STYLES. */
 
 /* =========================================
    PART 4: AUTHENTICATION PAGES (LOGIN/RESET UI)
@@ -156,13 +155,8 @@ body {
     margin-bottom: 10px; 
 }
 
-.auth-subtitle { 
-    text-align: center; 
-    color: #6b7280; 
-    font-size: 14px; 
-    margin-bottom: 30px; 
-    line-height: 1.5; 
-}
+/* NOTE: .auth-subtitle was declared here with color:#6b7280 / margin-bottom:30px.
+   It has been removed — the overriding definition is in PART 9 (Extracted Inline CSS). */
 
 .auth-input {
     width: 100%;
@@ -386,6 +380,10 @@ body {
     background-color: #cbd5e1; 
 }
 
+/* WARNING: .btn-save is defined here (green, for workshop/crop save) AND again in
+   PART 13 (purple, for product wishlist). They conflict. If you use .btn-save in
+   both contexts on the same page, the product card color (#9b59b6) will win.
+   Consider renaming one — e.g., .btn-save-workshop vs .btn-save-wishlist. */
 .btn-save { 
     background-color: #28a745; 
     color: white; 
@@ -521,30 +519,12 @@ body {
 }
 
 /* =========================================================
-   PART 8: PRODUCT GRID & SEARCH (Moved from index.php)
+   PART 8: PRODUCT GRID & SEARCH
    ========================================================= */
-.product-grid {
-     display: flex; 
-     flex-wrap: wrap; 
-     gap: 20px; 
-     justify-content: center; 
-     margin-top: 20px; 
-    }
 
-.product-card {
-    background: white; 
-    border-radius: 8px; 
-    padding: 15px; 
-    width: 250px; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-    text-align: center; 
-}
-.product-image { 
-    width: 100%; 
-    height: 200px; 
-    object-fit: cover; 
-    border-radius: 5px; 
-}
+/* NOTE: .product-grid, .product-card, .product-image were declared here
+   (flex-based layout). They have been removed — the final grid-based
+   definitions are in PART 13: HOMEPAGE STYLES. */
 
 .btn { 
     display: inline-block; 
@@ -569,14 +549,8 @@ body {
     margin: 10px 0;
  }
 
-.search-bar {
-    text-align: center;
-    margin: 20px 0;
-    display: flex;
-    justify-content: none;
-    align-items: none;
-    gap: 10px; /* Space between the text box and the buttons */
-}
+/* NOTE: .search-bar was declared here (no flex centering). It has been removed —
+   the full definition is in PART 13: HOMEPAGE STYLES. */
 
 /* Makes the text input box much larger */
 .search-bar input[type="text"] {
@@ -602,3 +576,867 @@ body {
     border-radius: 8px;
     margin-top: 0; 
 }
+
+    /* Keeps all forms and buttons side-by-side */
+    .inline-form {
+        display: inline-block;
+        margin-right: 4px; /* Adds a tiny gap between the buttons */
+    }
+
+/* NOTE: .btn-add-cart and .btn-wishlist were declared here (no width/cursor).
+   They have been removed — the full definitions with width/cursor are kept below. */
+
+/* Cart Button Styles */
+.btn-add-cart {
+    background-color: #27ae60 !important;
+    color: white !important;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+}
+.btn-add-cart:hover {
+    background-color: #219653 !important;
+}
+ .cart-container { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .cart-img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; vertical-align: middle; margin-right: 10px; }
+        .btn-small { background: #34495e; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .btn-remove { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .cart-summary { text-align: right; font-size: 1.2em; }
+        .btn-checkout { background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px; font-weight: bold; }
+
+/* Wishlist Button Styles */
+.btn-wishlist {
+    background-color: #9b59b6 !important;
+    color: white !important;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+}
+.btn-wishlist:hover {
+    background-color: #8e44ad !important;
+}
+
+/* NOTE: .product-category and .product-actions were declared here.
+   They have been removed — the final definitions are in PART 13: HOMEPAGE STYLES. */
+
+/* Groups all the buttons together cleanly */
+.action-row {
+    display: flex;
+    gap: 5px; /* Tiny gap between Add and Save */
+}
+
+/* Ensures both bottom buttons take up exactly 50% width */
+.action-row form,
+.action-row div {
+    flex: 1;
+    display: flex; 
+}
+
+
+/* =========================================================================
+   PRODUCTS CRUD - SEPARATED CSS
+   ========================================================================= */
+
+/* Layout & Typography */
+.flex-between-center { display: flex; justify-content: space-between; align-items: center; }
+.text-danger { color: #ef4444; font-weight: bold; }
+.divider-hr { border: 0; border-top: 1px solid #e5e7eb; margin-bottom: 20px; }
+
+/* Product Thumbnail */
+.product-thumb { width: 50px; height: 50px; object-fit: contain; border-radius: 4px; background: #fff; border: 1px solid #ddd; }
+
+/* Product Search Form */
+.admin-search-form { display: flex; gap: 10px; }
+.search-input-w200 { width: 200px; padding: 8px; }
+.search-select-auto { width: auto; padding: 8px; }
+
+/* Product Table Specifics */
+.admin-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+.admin-table th { padding: 12px; text-align: left; }
+.admin-table td { padding: 12px; vertical-align: middle; }
+.th-right { text-align: right !important; }
+.td-right { text-align: right; }
+
+/* Buttons */
+.btn-search-blue { padding: 8px 15px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.btn-reset-gray { padding: 8px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; }
+.btn-edit-blue { padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block; }
+.btn-delete-red { padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.btn-add-green { padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1em; }
+
+/* Add Product Form Grid */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.full-width { grid-column: span 2; }
+.form-label-block { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-input-box { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.form-file-box { width: 100%; padding: 10px; border: 1px dashed #aaa; border-radius: 4px; box-sizing: border-box; background: #f9fafb; }
+
+/* NOTE: .btn-view was declared here (no background-color).
+   It has been removed — the full definition with background-color is in PART 13. */
+
+/* =========================================
+   PART 9: EXTRACTED INLINE & INTERNAL CSS
+   ========================================= */
+
+/* --- header.php & footer.php --- */
+.home-body { margin: 0; background-color: #f5f5f5; }
+.site-footer { text-align: center; padding: 20px; color: #7f8c8d; margin-top: 50px; }
+.toast-message { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 9999; font-weight: bold; font-size: 1em; text-align: center; transition: opacity 0.5s ease; border-top: 4px solid #2ecc71; }
+
+/* --- product_detail.php --- */
+/* NOTE: .detail-page-body and .detail-card were also declared in the FIXES section
+   (PART 12). Those later definitions are identical and have been removed. */
+.detail-page-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+.detail-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 90%; text-align: center; }
+.detail-card img { width: 100%; max-height: 300px; object-fit: contain; border-radius: 10px; margin-bottom: 20px; }
+.detail-price { font-size: 28px; color: #28a745; font-weight: bold; margin: 10px 0; }
+.detail-category { color: #666; font-style: italic; margin-bottom: 20px; }
+.detail-stock { display: inline-block; padding: 5px 15px; background: #e9ecef; border-radius: 20px; font-weight: bold; }
+.detail-back-link { display: block; margin-top: 30px; text-decoration: none; color: #4a90e2; font-weight: bold; }
+.detail-back-link:hover { text-decoration: underline; }
+.detail-form { margin-top: 15px; }
+.btn-detail-wishlist { background: #e84393; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; max-width: 250px; }
+
+/* =========================================
+   PRODUCT DETAIL - FINAL CSS FIXES
+   ========================================= */
+.cart-alert {
+    background: #e1f5fe;
+    color: #0277bd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.qty-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.qty-input {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+}
+
+.btn-add-to-cart {
+    width: 100%;
+    max-width: 250px;
+}
+
+.btn-out-of-stock {
+    width: 100%;
+    max-width: 250px;
+    background: #999;
+    cursor: not-allowed;
+}
+
+.wishlist-saved-msg {
+    color: #e84393;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* --- Login, Register, Profile & OTP Files --- */
+.hidden-input { display: none; }
+/* NOTE: .auth-subtitle overrides the earlier definition in PART 4 with different
+   color (#121010 vs #6b7280) and adds box-shadow + padding for a specific context. */
+.auth-subtitle { text-align: center; color: #121010; margin-bottom: 20px; font-size: 14px; box-shadow: 0 5px 5px rgba(58, 36, 36, 0.1); padding: 15px; border-radius: 4px; }
+.auth-footer-text { margin-top: 20px; text-align: center; font-size: 14px; }
+.link-primary { color: #0056b3; text-decoration: underline; }
+.link-danger { color: #ee4d2d; font-weight: bold; text-decoration: none; }
+.auth-divider { border: 0; border-top: 1px solid #ddd; margin: 15px 0; }
+.auth-error-msg { color: red; background-color: #fdd; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center; }
+.auth-success-msg { color: green; background-color: #dfd; border: 1px solid green; padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center; }
+.auth-subtitle-center { text-align: center; margin-bottom: 15px; }
+.auth-muted-text { text-align: center; color: #6b7280; font-size: 13px; }
+.otp-instruction { text-align: center; color: #555; margin-bottom: 20px; font-size: 14px; }
+.otp-input { text-align: center; letter-spacing: 5px; font-size: 1.2em; }
+.form-label { font-size: 14px; color: #555; }
+.profile-link { color: #3d1ac7; text-decoration: underline; }
+.profile-pic-custom { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid #ee4d2d; }
+.profile-pic-default { border-radius: 50%; }
+.btn-group-col { display: flex; flex-direction: column; gap: 10px; }
+.btn-full-width { width: 100%; }
+
+/* --- PHP Email Template Styles --- */
+.email-otp { background-color: #f8f9fa; padding: 20px; text-align: center; color: #ee4d2d; letter-spacing: 5px; }
+.email-btn { background-color: #ee4d2d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; }
+
+/* =========================================
+   PART 10: ORDER, PAYMENT & AUTH EXTRAS
+   ========================================= */
+
+/* --- Order Success & Payment --- */
+.order-success-body { text-align: center; margin-top: 80px; font-family: sans-serif; }
+.payment-body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+.payment-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+.payment-title { color: #2c3e50; margin-bottom: 10px; }
+.payment-subtitle { color: #7f8c8d; margin-bottom: 30px; }
+.payment-amount { font-size: 2em; color: #27ae60; font-weight: bold; margin-bottom: 30px; }
+.payment-error { text-align: center; margin-top: 50px; }
+
+/* --- Register & Reset Password --- */
+.auth-success-box { color: green; background-color: #dfd; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; text-align: center; }
+.auth-error-box { color: #ff132a; background-color: #f8d7da; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; text-align: left; }
+.auth-error-list { margin: 0; padding-left: 20px; }
+.btn-block-link { text-decoration: none; display: block; text-align: center; box-sizing: border-box; }
+.auth-link-bold { color: #0056b3; font-weight: bold; }
+.auth-link-danger { color: #ee4d2d; font-weight: bold; }
+
+/* --- Wishlist --- */
+/* NOTE: .product-grid, .product-card, .product-image were declared here for wishlist
+   (auto-fill, 200px min). They have been removed — see PART 13 for the final definitions.
+   If the wishlist page needs different sizing, consider a scoped class like .wishlist-grid. */
+.btn-block-sm { width: 100%; box-sizing: border-box; margin-bottom: 5px; }
+
+/* --- Upload Photo / Cropper --- */
+.cropper-container-box { max-width: 100%; margin-bottom: 20px; }
+.cropper-img { display: block; max-width: 100%; }
+.upload-btn-wrapper { margin-bottom: 20px; }
+.btn-save-crop { display: none; width: 100%; background: #28a745; margin-top: 10px; }
+.btn-save-crop.active { display: block; }
+/* =========================================
+   UPLOAD PHOTO / PROFILE PHOTO WORKSHOP
+   upload_photo.css
+   ========================================= */
+
+/* --- Card Container --- */
+.workshop-card {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* --- Heading & Subtitle --- */
+.workshop-title {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.workshop-subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+    margin-top: 0;
+}
+
+/* --- Error Message --- */
+.workshop-error {
+    color: #b91c1c;
+    background-color: #fef2f2;
+    border: 1px solid #f87171;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* --- Current Photo Preview (circular) --- */
+.avatar-preview-wrapper {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 25px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f1f1f1;
+}
+
+.avatar-preview-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* --- Cropper Area (hidden until photo is selected) --- */
+.cropper-view {
+    display: none; /* Shown via JS once a file is picked */
+}
+
+.img-to-crop-container {
+    max-height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cropper-img {
+    display: block;
+    max-width: 100%;
+}
+
+/* Makes the Cropper.js crop box circular */
+.cropper-view-box,
+.cropper-face {
+    border-radius: 50%;
+}
+
+/* --- Action Buttons --- */
+.workshop-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.workshop-btn {
+    border: none;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Upload / Choose Photo button */
+.btn-upload {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+.btn-upload:hover {
+    background-color: #cbd5e1;
+}
+
+/* Save button — disabled (greyed out) by default */
+.btn-save-workshop {
+    background-color: #28a745;
+    color: white;
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Enabled once a photo is loaded */
+.btn-save-workshop.active {
+    opacity: 1;
+    cursor: pointer;
+}
+.btn-save-workshop.active:hover {
+    background-color: #218838;
+}
+
+/* --- Cancel Link --- */
+.workshop-cancel-link {
+    color: #3300ff;
+    text-decoration: underline;
+    font-size: 14px;
+    display: inline-block;
+    margin-top: 5px;
+    transition: color 0.2s ease;
+}
+.workshop-cancel-link:hover {
+    color: #1a00aa;
+}
+
+/* --- Hidden Utility Elements --- */
+.hidden-file-input {
+    display: none;
+}
+
+.hidden-form {
+    display: none;
+}
+
+/* =========================================
+   PART 11: ADMIN PANEL CSS
+   ========================================= */
+
+/* --- Admin Login --- */
+/* NOTE: .admin-login-body, .login-box, .admin-form-group, .btn-admin-login were
+   declared here with slightly different values (background: #003566, border-radius: 10px,
+   margin-bottom: 15px, background: #0274ff). They have been removed — the overriding
+   definitions from the FIXES section are kept in PART 12. */
+.admin-error { color: #dc3545; background: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+.admin-back-link { display: block; margin-top: 25px; color: #666; text-decoration: none; font-size: 0.9em; font-weight: bold; transition: 0.3s; }
+.admin-back-link:hover { color: #4a90e2; text-decoration: underline; }
+
+/* --- Admin Dashboard --- */
+.admin-body { background: #f4f7f6; padding: 20px; margin: 0; font-family: 'Segoe UI', sans-serif; }
+.dashboard-header { display: flex; align-items: center; margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.dashboard-header h2 { margin: 0; color: #2c3e50; }
+.btn-logout { background: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; text-decoration: none; cursor: pointer; }
+.dashboard-chart-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.dashboard-chart-card h3 { color: #34495e; }
+.empty-chart-state { text-align: center; padding: 50px; }
+.empty-chart-text-1 { color: #95a5a6; font-size: 1.2em; }
+.empty-chart-text-2 { color: #bdc3c7; }
+
+/* --- Admin Products, Categories, Orders --- */
+/* NOTE: .inline-form was declared here (display: inline-block only). It has been
+   removed — the version in PART 8 with margin-right: 4px is kept. */
+.btn-edit-sm { margin-right: 5px; }
+.low-stock-cell { color: red; font-weight: bold; }
+.center-padding-20 { text-align: center; padding: 20px; }
+.center-padding-50 { text-align: center; padding: 50px; }
+.product-edit-img { border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 120px; }
+.file-upload-margin { margin-top: 5px; }
+.mt-25 { margin-top: 25px; }
+.flex-gap-6 { display: flex; gap: 6px; }
+.flex-center-gap-12 { display: flex; align-items: center; gap: 12px; }
+.align-right { text-align: right; }
+
+/* --- Admin Members --- */
+.member-table { width: 100%; border-collapse: collapse; background-color: white; }
+.member-table th { text-align: left; }
+.member-table td { vertical-align: middle; padding: 15px 10px; }
+.bg-dark-blue { background-color: #0b1c3d; color: white; }
+.border-bottom-gray { border-bottom: 1px solid #e5e7eb; }
+.bg-light-gray { background-color: #f9fafb; }
+.font-bold-blue { font-weight: bold; color: #1e3a8a; }
+.font-bold { font-weight: bold; }
+.text-gray { color: #6b7280; }
+.status-badge { padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em; text-transform: uppercase; }
+.badge-role { background-color: #e0f2fe; color: #075985; }
+.badge-active { background-color: #d1fae5; color: #065f46; }
+.badge-blocked { background-color: #fee2e2; color: #991b1b; }
+.btn-toggle-block { background-color: #ef4444; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 0.9em; }
+.btn-toggle-unblock { background-color: #10b981; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 0.9em; }
+.text-you { color: #9ca3af; font-size: 0.9em; padding-right: 15px; }
+
+/* --- Admin Utility Classes --- */
+/* Layout & Containers */
+.admin-container-lg { max-width: 1200px; margin: 40px auto; padding: 20px; }
+.admin-container-md { max-width: 900px; margin: 0 auto; }
+.admin-container-sm { max-width: 600px; margin: 0 auto; }
+.admin-search-box { background-color: #f0fdf4; padding: 20px; border-left: 5px solid #22c55e; border-radius: 8px; margin-bottom: 30px; }
+.admin-form-box { background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
+.admin-form-box-mb20 { background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.grid-2-col-gap20 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-col-span-2 { grid-column: span 2; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-end-gap-12 { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+
+/* Spacing & Utilities */
+.m-0 { margin: 0; }
+.mt-0 { margin-top: 0; }
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-30 { margin-bottom: 30px; }
+.my-25 { margin: 25px 0; }
+.mr-15 { margin-right: 15px; }
+.margin-left-auto { margin-left: auto; }
+.pt-20 { padding-top: 20px; }
+.border-bottom-pb15 { border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; }
+.inline-block { display: inline-block; }
+.float-right { float: right; }
+
+/* Typography */
+.text-blue-title { color: #f6f7f9; }
+.text-blue-link { color: #3b82f6; text-decoration: none; font-weight: bold; }
+.text-danger-link { color: #ef4444; text-decoration: none; font-weight: bold; }
+.text-green { color: #16a34a; }
+.font-size-09 { font-size: 0.9em; }
+.font-size-1-1 { font-size: 1.1em; }
+.font-size-1-2 { font-size: 1.2em; }
+.font-italic { font-style: italic; }
+.search-label { font-weight: bold; color: #166534; }
+
+/* Forms & Inputs */
+.admin-input-full { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+.admin-input-w-250 { padding: 10px; width: 250px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+.admin-input-w-300 { padding: 10px; width: 300px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+.search-input-lg { padding: 12px; width: 400px; border: 1px solid #c3e6cb; border-radius: 6px; font-size: 1em; box-sizing: border-box; }
+.admin-select { padding: 10px; border-radius: 4px; border: 1px solid #ccc; }
+.admin-select-sm { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+
+/* Buttons */
+.btn-search-primary { background-color: #3b82f6; padding: 12px 24px; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-success-solid { background: #10b981; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-success-sm { padding: 5px 10px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.btn-primary-sm { padding: 5px 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; display: inline-block; text-decoration: none; }
+.btn-sm { padding: 5px 10px; }
+
+/* Misc Elements */
+.msg-success { background: #d1fae5; color: #065f46; padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+.img-thumb-50 { width: 50px; height: 50px; object-fit: cover; margin: 0; border-radius: 4px; }
+.img-thumb-60 { width: 60px; border-radius: 4px; }
+.chart-canvas { max-height: 400px; width: 100%; }
+
+/* =========================================================================
+   ORDERS CRUD & ADMIN LAYOUT FIXES
+   ========================================================================= */
+
+/* Forces the layout to stretch full height and place sidebar/main side-by-side */
+.admin-layout-flex {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Forces the main content area to fill all remaining space on the right */
+.admin-main-flex {
+    flex: 1;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Forces the white card to stretch 100% of the main area */
+.admin-card-full {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Flexbox for forms (like the status update dropdown and button) */
+.form-flex-row {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+
+
+/* =====================================================
+   ADMIN PANEL LAYOUT
+   admin.css  —  dark navy sidebar + content area
+   ===================================================== */
+
+/* ---- Page body: same dark navy gradient as login ---- */
+.admin-body {
+    background: linear-gradient(160deg, #01438a 0%, #ffffff 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ---- Two-column layout: sidebar | main ---- */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+.admin-sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background: rgba(47, 52, 95, 0.3);
+    backdrop-filter: blur(8px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+/* Brand / Logo area */
+.admin-sidebar-brand {
+    padding: 28px 20px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.admin-sidebar-brand h2 {
+    color: #ffffff;
+    margin: 0 0 4px;
+    font-size: 1.05em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.admin-sidebar-brand p {
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Nav links */
+.admin-nav {
+    padding: 12px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-nav a {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 20px;
+    color: rgba(255, 255, 255, 0.68);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.admin-nav a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-left-color: #38BDF8;
+}
+
+/* Highlight for the current page */
+.admin-nav a.active {
+    background: rgba(56, 189, 248, 0.14);
+    color: #ffffff;
+    border-left-color: #38BDF8;
+    font-weight: 600;
+}
+
+/* Thin divider between nav sections */
+.admin-nav .nav-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 10px 0;
+}
+
+/* Logout link — red tint */
+.admin-nav .nav-logout a {
+    color: #f87171;
+}
+.admin-nav .nav-logout a:hover {
+    background: rgba(248, 113, 113, 0.10);
+    border-left-color: #f87171;
+    color: #fca5a5;
+}
+
+/* =====================================================
+   MAIN CONTENT AREA
+   ===================================================== */
+.admin-main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    min-width: 0; /* prevents flex blowout */
+}
+
+/* White content card */
+.dashboard-chart-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Page title used inside cards */
+.dashboard-title {
+    color: #1e3a8a;
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+/* =========================================
+   PART 12: FIXES FOR CENTERING
+   ========================================= */
+
+/* NOTE: .detail-page-body and .detail-card blocks were here — removed as exact
+   duplicates of the definitions in PART 9 (Extracted Inline CSS). */
+
+/* Fix for Admin Login Page Styling & Centering */
+.admin-login-body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #1e3a8a; /* Deep blue background, like your dashboard */
+    margin: 0;
+    padding: 0;
+    
+    /* Centering logic */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Styled login card (like a member login style) */
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Standardizing inputs and buttons inside the login box */
+.admin-form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.admin-form-group label {
+    font-weight: bold;
+    color: #1e3a8a;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* NOTE: .admin-form-group input was declared in PART 11 (padding: 10px, border-radius: 5px).
+   Kept below since there is no later duplicate of this specific sub-rule. */
+.admin-form-group input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+
+.btn-admin-login {
+    width: 100%;
+    padding: 12px;
+    background: #1e3a8a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: background 0.3s;
+}
+
+.btn-admin-login:hover {
+    background: #0b1c3d;
+}
+
+/* =========================================
+   PART 13: HOMEPAGE (INDEX.PHP) STYLES
+   ========================================= */
+
+/* Main wrapper centering */
+.home-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;          /* Centers the block on the page */
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* Forces all children to the center */
+    text-align: center;
+}
+
+.home-title {
+    color: #1e3a8a;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+/* Centered Search Bar */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 600px;
+}
+
+.search-input {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    flex: 1;
+    font-size: 1em;
+}
+
+/* Centered Product Grid */
+.product-grid {
+    display: grid;
+    /* This creates responsive columns and centers them */
+    grid-template-columns: repeat(auto-fit, minmax(260px, max-content));
+    gap: 30px;
+    width: 100%;
+    justify-content: center; 
+}
+
+/* Individual Product Card */
+.product-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* Centers items inside the card */
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.product-title {
+    font-size: 1.2em;
+    margin: 10px 0 5px;
+    color: #333;
+}
+
+.product-category {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #27ae60;
+    margin-bottom: 20px;
+}
+
+/* Card Button Formatting */
+.product-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-card {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.9em;
+    display: inline-block;
+    transition: 0.2s;
+}
+
+.btn-view  { background-color: #3498db; width: 100%; box-sizing: border-box;}
+.btn-view:hover { background-color: #2980b9; }
+
+.btn-add   { background-color: #27ae60; flex: 1; }
+.btn-add:hover { background-color: #219653; }
+
+/* WARNING: .btn-save below (purple, #9b59b6) conflicts with .btn-save in PART 6
+   (green, #28a745 for workshop crop). The purple color will win due to cascade order.
+   Consider renaming to avoid ambiguity. */
+.btn-save  { background-color: #9b59b6; flex: 1; }
+.btn-save:hover { background-color: #8e44ad; }
+
+.btn-clear { background-color: #e74c3c; color: white; padding: 12px 20px; text-decoration: none; border-radius: 8px;}
+.btn-clear:hover { background-color: #c0392b; }
