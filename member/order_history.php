@@ -26,71 +26,59 @@ $stmt->execute([$_SESSION['user_id']]);
 $orders = $stmt->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $lang['my_purchases'] ?? 'My Purchases' ?></title>
-    <link rel="stylesheet" href="../css/mainstyle.css">
-</head>
-<body class="home-body">
+<?php include '../header.php'; ?>
 
-    <?php include '../header.php'; ?>
+<div class="order-container">
+    <h2>🛍️ <?= $lang['my_purchases'] ?? 'My Purchases' ?></h2>
 
-    <div class="order-container">
-        <h2>🛍️ <?= $lang['my_purchases'] ?? 'My Purchases' ?></h2>
+    <?php if ($success_msg): ?>
+        <div class="alert-success">
+            <?= htmlspecialchars($success_msg) ?>
+        </div>
+    <?php endif; ?>
 
-        <?php if ($success_msg): ?>
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
-                <?= htmlspecialchars($success_msg) ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($orders): ?>
-            <?php foreach ($orders as $order): ?>
-                <?php 
-                    $status_class = 'status-' . strtolower($order['status']); 
-                ?>
-                <div class="order-card">
-                    <div class="order-header">
-                        <div>
-                            <strong><?= $lang['order_no'] ?? 'Order #' ?><?= htmlspecialchars($order['id']) ?></strong>
-                            <div style="font-size: 0.9em; color: var(--text-muted); margin-top: 5px;">
-                                <?= $lang['date'] ?? 'Date' ?>: <?= date('d M Y, h:i A', strtotime($order['order_date'])) ?>
-                            </div>
-                        </div>
-                        <div class="order-status <?= $status_class ?>">
-                            <?= htmlspecialchars($order['status']) ?>
+    <?php if ($orders): ?>
+        <?php foreach ($orders as $order): ?>
+            <?php 
+                $status_class = 'status-' . strtolower($order['status']); 
+            ?>
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <strong><?= $lang['order_no'] ?? 'Order #' ?><?= htmlspecialchars($order['id']) ?></strong>
+                        <div class="order-summary mt-15">
+                            <?= $lang['date'] ?? 'Date' ?>: <?= date('d M Y, h:i A', strtotime($order['order_date'])) ?>
                         </div>
                     </div>
-
-                    <div class="order-body">
-                        <div><?= $lang['items'] ?? 'Items' ?>: <?= $order['item_count'] ?></div>
-                        <div class="order-total">
-                            <?= $lang['total'] ?? 'Total' ?>: <span>RM <?= number_format($order['total_amount'], 2) ?></span>
-                        </div>
-                        <div class="action-buttons">
-                            <a href="order_details.php?id=<?= $order['id'] ?>" class="btn-view"><?= $lang['view_details'] ?? 'View Details' ?></a>
-                            
-                            <?php if ($order['status'] === 'Pending' || $order['status'] === 'Completed' || $order['status'] === 'Paid'): ?>
-                                <form action="cancel_order.php" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this order? This cannot be undone.');">
-                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
-                                    <button type="submit" class="btn-cancel">❌ <?= $lang['cancel_order'] ?? 'Cancel Order' ?></button>
-                                </form>
-                            <?php endif; ?>
-                        </div>
+                    <div class="order-status <?= $status_class ?>">
+                        <?= htmlspecialchars($order['status']) ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="empty-state">
-                <p>📭 You haven't placed any orders yet.</p>
-                <a href="../index.php" class="btn-shop"><?= $lang['start_shopping'] ?? 'Start Shopping' ?></a>
-            </div>
-        <?php endif; ?>
-    </div>
 
-    <?php include '../footer.php'; ?>
-</body>
-</html>
+                <div class="order-body">
+                    <div><?= $lang['items'] ?? 'Items' ?>: <?= $order['item_count'] ?></div>
+                    <div class="order-total">
+                        <?= $lang['total'] ?? 'Total' ?>: <span>RM <?= number_format($order['total_amount'], 2) ?></span>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="order_details.php?id=<?= $order['id'] ?>" class="btn-view"><?= $lang['view_details'] ?? 'View Details' ?></a>
+                        
+                        <?php if ($order['status'] === 'Pending' || $order['status'] === 'Completed' || $order['status'] === 'Paid'): ?>
+                            <form action="cancel_order.php" method="POST" class="inline-form" onsubmit="return confirm('Are you sure you want to cancel this order? This cannot be undone.');">
+                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
+                                <button type="submit" class="btn-cancel">❌ <?= $lang['cancel_order'] ?? 'Cancel Order' ?></button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="empty-state">
+            <p>📭 You haven't placed any orders yet.</p>
+            <a href="../index.php" class="btn-shop"><?= $lang['start_shopping'] ?? 'Start Shopping' ?></a>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php include '../footer.php'; ?>

@@ -16,8 +16,7 @@ function sanitize($data) {
  */
 function display_error($errors, $field) {
     if (isset($errors[$field])) {
-        // Outputting a clean, custom CSS class 'error-text' (You will style this in style.css)
-        echo '<span class="error-text" style="color: red; font-size: 0.85em;">' . sanitize($errors[$field]) . '</span>';
+        echo '<span class="error-text">' . sanitize($errors[$field]) . '</span>';
     }
 }
 

@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="auth-btn"><?= $lang['save_changes'] ?></button>
         </form>
 
-        <div class="auth-footer" style="margin-top: 15px;">
+        <div class="auth-footer mt-15">
             <a href="profile.php" class="link-primary"><?= $lang['cancel'] ?></a>
         </div>
     </div>

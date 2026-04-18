@@ -49,7 +49,7 @@ if (isset($_POST['change_password'])) {
     <div class="auth-card">
         <div class="auth-title"><?= $lang['change_password'] ?></div>
 
-        <div class="auth-footer" style="margin-bottom: 15px;">
+        <div class="auth-footer mb-15">
             <a href="profile.php" class="link-primary"><?= $lang['back_to_profile'] ?></a>
         </div>
 

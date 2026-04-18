@@ -17,7 +17,7 @@ $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    die("<div style='text-align:center; margin-top:50px;'><h2>Order Not Found.</h2><a href='index.php'>Go Home</a></div>");
+    die("<div class='text-center mt-50'><h2>Order Not Found.</h2><a href='index.php'>Go Home</a></div>");
 }
 
 // 3. Handle the background 'Success' ping from PayPal (USING GET NOW)

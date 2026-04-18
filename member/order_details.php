@@ -21,7 +21,7 @@ $stmt->execute([$order_id, $member_id]);
 $order = $stmt->fetch();
 
 if (!$order) {
-    die("<div style='text-align: center; padding: 50px;'><h2 style='color: var(--text-main);'>Order not found.</h2><a href='order_history.php'>← Back to Orders</a></div>");
+    die("<div class='text-center p-50'><h2 class='text-main'>Order not found.</h2><a href='order_history.php'>← Back to Orders</a></div>");
 }
 
 // Fetch order items
@@ -49,15 +49,15 @@ $items = $stmt->fetchAll();
 
     <div class="order-container">
         
-        <div style="margin-bottom: 20px;">
-            <a href="order_history.php" style="color: #4a90e2; text-decoration: none;">← Back to Orders</a>
+        <div class="mb-20">
+            <a href="order_history.php" class="link-blue no-underline">← Back to Orders</a>
         </div>
 
         <div class="order-card">
-            <div class="order-header" style="border: none; margin: 0; padding: 0;">
+            <div class="order-header no-border m-0 p-0">
                 <div>
                     <h2><?= $lang['order_details'] ?? 'Order Details' ?> #<?= htmlspecialchars($order['id']) ?></h2>
-                    <div style="color: var(--text-muted); margin-top: 5px;">
+                    <div class="text-muted mt-5">
                         <?= date('d M Y, h:i A', strtotime($order['order_date'])) ?>
                     </div>
                 </div>
@@ -67,8 +67,8 @@ $items = $stmt->fetchAll();
             </div>
         </div>
 
-        <h3 style="margin: 20px 0 10px; color: var(--text-main);"><?= $lang['items'] ?? 'Items' ?></h3>
-        <div style="background: var(--bg-card); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+        <h3 class="mt-20 mb-10 text-main"><?= $lang['items'] ?? 'Items' ?></h3>
+        <div class="bg-card radius-8 overflow-hidden border-solid">
             <?php foreach ($items as $item): ?>
                 <?php 
                     $img_path = (!empty($item['image_name']) && file_exists('../uploads/' . $item['image_name'])) 

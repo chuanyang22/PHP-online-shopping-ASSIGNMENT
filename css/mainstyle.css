@@ -19,7 +19,6 @@ body.dark-mode {
     --border-color: #333333;
 }
 
-
 /* =========================================
    PART 1: GENERAL RESET & MAIN LAYOUT
    ========================================= */
@@ -102,7 +101,7 @@ body {
 
 /* =========================================
    PART 3: TOP NAVIGATION BAR 
-   ========================================= */
+========================================= */
 .navbar {
     background-color: #001D3D; 
     color: white;
@@ -656,7 +655,6 @@ body {
     display: flex; 
 }
 
-
 /* =========================================================================
    PRODUCTS CRUD - SEPARATED CSS
    ========================================================================= */
@@ -1064,7 +1062,7 @@ body {
 .float-right { float: right; }
 
 /* Typography */
-.text-blue-title { color: #f6f7f9; }
+.text-blue-title { color: #8ab1ff; }
 .text-blue-link { color: #3b82f6; text-decoration: none; font-weight: bold; }
 .text-danger-link { color: #ef4444; text-decoration: none; font-weight: bold; }
 .text-green { color: #16a34a; }
@@ -1696,7 +1694,6 @@ table, th, td, .cart-table th, .cart-table td {
 .btn-disabled { background-color: var(--border-color); color: var(--text-muted); cursor: not-allowed; border: none; padding: 10px 15px; border-radius: 5px; }
 .qty-input-small { width: 60px; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); }
 
-
 /* =========================================================================
    DARK MODE OVERRIDES FOR CONTAINERS & CARDS
    ========================================================================= */
@@ -1719,4 +1716,132 @@ table, th, td, .cart-table th, .cart-table td {
 .page-container h3,
 .page-container p {
     color: var(--text-main) !important;
+}
+
+/* =========================================
+   UTILITY CLASSES (Replaces Inline CSS)
+   ========================================= */
+.mb-15 { margin-bottom: 15px; }
+.mt-15 { margin-top: 15px; }
+.mt-10 { margin-top: 10px; }
+.mt-5 { margin-top: 5px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mt-20 { margin-top: 20px; }
+.mt-50 { margin-top: 50px; }
+.p-50 { padding: 50px; }
+.p-30 { padding: 30px; }
+.m-0 { margin: 0; }
+.p-0 { padding: 0; }
+.flex-center { display: flex; justify-content: center; }
+.map-iframe { border: 0; border-radius: 10px; }
+.link-blue { color: #4a90e2; }
+.link-danger { color: #ee4d2d; }
+.no-underline { text-decoration: none; }
+.no-border { border: none; }
+.bg-white { background: white; }
+.bg-card { background: var(--bg-card, #fff); }
+.radius-8 { border-radius: 8px; }
+.radius-12 { border-radius: 12px; }
+.shadow-sm { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.font-1-2 { font-size: 1.2em; }
+.chart-container { position: relative; height: 40vh; width: 100%; }
+.overflow-hidden { overflow: hidden; }
+.border-solid { border: 1px solid var(--border-color, #ccc); }
+.error-text { color: red; font-size: 0.85em; }
+.text-main { color: var(--text-main, #333); }
+.text-muted { color: var(--text-muted, #666); }
+.js-error {
+    color: red;
+    font-size: 14px;
+    margin-left: 10px;
+    display: inline-block; /* Helps with spacing */
+}
+
+/* Login */
+/* Style for the 'Reset Password' link when blocked */
+.auth-link-danger {
+    color: #ee4d2d;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Style for the 'Sign Up' and 'Admin' links */
+.auth-link-primary {
+    color: #ee4d2d;
+    text-decoration: none;
+}
+
+.auth-link-danger:hover, .auth-link-primary:hover {
+    text-decoration: underline;
+}
+
+/* Ensure hidden honeypot inputs remain invisible */
+.hidden-input {
+    display: none;
+}
+
+/* =========================================================================
+   CHINESE LANGUAGE TYPOGRAPHY FIXES (SAFE VERSION)
+   ========================================================================= */
+
+/* 1. Fix the font and remove weird spacing for all normal text */
+html[lang="cn"] body,
+html[lang="cn"] h1,
+html[lang="cn"] h2,
+html[lang="cn"] h3,
+html[lang="cn"] p,
+html[lang="cn"] a,
+html[lang="cn"] .navbar-brand a {
+    font-family: "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif !important;
+    letter-spacing: normal !important;
+    word-break: normal !important;
+}
+
+html[lang="cn"] p {
+    line-height: 1.8 !important;
+}
+
+/* 2. Fix the buttons without breaking the page layout */
+html[lang="cn"] .auth-btn,
+html[lang="cn"] .action-btn,
+html[lang="cn"] .btn,
+html[lang="cn"] .btn-checkout {
+    font-family: "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif !important;
+    letter-spacing: normal !important;
+    
+    /* INLINE-FLEX is the magic fix here! It centers text but doesn't break grids */
+    display: inline-flex !important; 
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Removes the invisible English bottom-gap */
+    line-height: 1 !important; 
+    
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    text-transform: none !important;
+}
+
+/* Styling for the new Category Dropdown */
+.search-select {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: white;
+    cursor: pointer;
+    min-width: 180px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-select:focus {
+    border-color: #9333EA; /* Matches your purple focus ring */
+    box-shadow: 0 0 8px rgba(147, 51, 234, 0.3);
+}
+
+/* Adjust the search bar flexbox to fit the new dropdown cleanly */
+.search-bar {
+    max-width: 800px; /* Increased slightly to fit the extra box */
 }

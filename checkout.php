@@ -25,7 +25,7 @@ $stmt->execute([$user_id]);
 $user_data     = $stmt->fetch();
 $saved_address = $user_data['address'] ?? '';
 
-// Fetch cart items & total
+// Fetch cart items & verify current stock
 $cart_total = 0;
 $cart_items = [];
 $placeholders = implode(',', array_fill(0, count($_SESSION['cart']), '?'));
@@ -34,16 +34,22 @@ $stmt->execute(array_keys($_SESSION['cart']));
 $products_in_cart = $stmt->fetchAll();
 
 foreach ($products_in_cart as $product) {
-    $qty               = $_SESSION['cart'][$product['id']];
-    $subtotal          = $product['price'] * $qty;
-    $cart_total       += $subtotal;
+    $qty = $_SESSION['cart'][$product['id']];
+    
+    // FINAL STOCK CHECK: Ensure quantity doesn't exceed available stock
+    if ($qty > $product['stock_quantity']) {
+        $error = "Error: " . htmlspecialchars($product['name']) . " only has " . $product['stock_quantity'] . " left in stock.";
+    }
+
+    $subtotal = $product['price'] * $qty;
+    $cart_total += $subtotal;
     $product['cart_qty'] = $qty;
     $product['subtotal'] = $subtotal;
-    $cart_items[]      = $product;
+    $cart_items[] = $product;
 }
 
 // Handle POST after PayPal approval
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($error)) {
     $shipping_address  = trim($_POST['shipping_address']  ?? '');
     $paypal_order_id   = trim($_POST['paypal_order_id']   ?? '');
     $paypal_capture_id = trim($_POST['paypal_capture_id'] ?? '');
@@ -51,21 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($shipping_address) || empty($paypal_order_id) || empty($paypal_capture_id)) {
         $error = "Error processing payment details. Please contact support.";
     } else {
+        // Update user address if it changed
         if ($shipping_address !== $saved_address) {
             $update_stmt = $pdo->prepare("UPDATE member SET address = ? WHERE id = ?");
             $update_stmt->execute([$shipping_address, $user_id]);
         }
 
-        $stmt = $pdo->prepare("INSERT INTO orders (member_id, total_amount, shipping_address, status, payment_id) VALUES (?, ?, ?, 'Paid', ?)");
-        if ($stmt->execute([$user_id, $cart_total, $shipping_address, $paypal_capture_id])) {
+        // Insert into orders table with status 'Paid'
+        $stmt = $pdo->prepare("INSERT INTO orders (member_id, total_amount, shipping_address, status, paypal_capture_id, paypal_order_id) VALUES (?, ?, ?, 'Paid', ?, ?)");
+        if ($stmt->execute([$user_id, $cart_total, $shipping_address, $paypal_capture_id, $paypal_order_id])) {
             $order_id  = $pdo->lastInsertId();
             $item_stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?)");
             $stock_stmt= $pdo->prepare("UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?");
 
             foreach ($cart_items as $item) {
+                // Save each item and REDUCE stock quantity in the database
                 $item_stmt->execute([$order_id, $item['id'], $item['cart_qty'], $item['price']]);
                 $stock_stmt->execute([$item['cart_qty'], $item['id']]);
             }
+            
             unset($_SESSION['cart']);
             header("Location: order_success.php?id=" . $order_id);
             exit();
@@ -78,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include 'header.php'; ?>
 
-<script src="https://www.paypal.com/sdk/js?client-id=ASqI0lK2qRk_B-169m1Jd7XU8kE0l5Hh6qfP9fG6EONyFh3U1q1Wp8gA5C4J3B7H0K9L6M5N4P3Q2R1S&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
 
 <div class="checkout-container">
     <h2 class="text-center">💳 <?= $lang['checkout'] ?></h2>
@@ -87,9 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="error-msg"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <h3 class="text-center">
-        <?= $lang['order_summary'] ?>: <strong>RM <?= number_format($cart_total, 2) ?></strong>
-    </h3>
+    <div class="order-summary-box p-30">
+        <h3 class="text-center">
+            <?= $lang['order_summary'] ?>: <strong>RM <?= number_format($cart_total, 2) ?></strong>
+        </h3>
+    </div>
 
     <form id="checkout-form" action="checkout.php" method="POST">
         <label for="shipping_address" class="form-label">
@@ -102,7 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="hidden" name="paypal_capture_id" id="paypal_capture_id" value="">
     </form>
 
-    <div id="paypal-button-container" class="mt-20"></div>
+    <?php if (empty($error)): ?>
+        <div id="paypal-button-container" class="mt-20"></div>
+    <?php else: ?>
+        <div class="text-center mt-20">
+            <a href="cart.php" class="btn"><?= $lang['back_to_cart'] ?? 'Return to Cart' ?></a>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -127,8 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 document.getElementById('checkout-form').submit();
             });
         },
-        onCancel: function () { alert('Payment cancelled. Your cart is still saved.'); },
-        onError:  function (err) { alert('A PayPal error occurred. Please try again.'); console.error(err); }
+        onCancel: function () { alert('Payment cancelled.'); },
+        onError:  function (err) { alert('A PayPal error occurred.'); }
     }).render('#paypal-button-container');
 </script>
 

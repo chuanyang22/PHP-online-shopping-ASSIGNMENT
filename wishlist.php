@@ -31,8 +31,9 @@ $wishlist_items = $stmt->fetchAll();
     <div class="page-container">
         <h2>❤️ <?= $lang['my_wishlist'] ?? 'My Wishlist' ?></h2>
 
-        <?php if (isset($_GET['msg'])): ?>
-            <p class="success-msg"><?= htmlspecialchars($_GET['msg']) ?></p>
+        <?php if (isset($_SESSION['popup'])): ?>
+            <p class="msg-success"><?= htmlspecialchars($_SESSION['popup']) ?></p>
+            <?php unset($_SESSION['popup']); ?>
         <?php endif; ?>
 
         <?php if(count($wishlist_items) > 0): ?>
@@ -40,18 +41,26 @@ $wishlist_items = $stmt->fetchAll();
                 <?php foreach($wishlist_items as $item): ?>
                     <div class="product-card">
                         <?php $imagePath = !empty($item['image_name']) ? 'uploads/' . htmlspecialchars($item['image_name']) : 'uploads/default.png'; ?>
-                        <img src="<?= $imagePath ?>" class="product-image">
+                        <img src="<?= $imagePath ?>" class="product-image" alt="<?= htmlspecialchars($item['name']) ?>">
                         
                         <h3 class="product-title"><?= htmlspecialchars($item['name']) ?></h3>
                         <p class="product-price">RM <?= number_format($item['price'], 2) ?></p>
                         
-                        <a href="product_detail.php?id=<?= $item['id'] ?>" class="btn-view"><?= $lang['view_details'] ?? 'View Details' ?></a>
-                        
-                        <form action="wishlist_action.php" method="POST" style="margin-top: 10px;">
-                            <input type="hidden" name="product_id" value="<?= $item['id'] ?>">
-                            <input type="hidden" name="action" value="remove">
-                            <button type="submit" class="btn-remove"><?= $lang['remove_from_wishlist'] ?? 'Remove from Wishlist' ?></button>
-                        </form>
+                        <div class="product-actions btn-group-col btn-full-width">
+                            
+                            <a href="product_detail.php?id=<?= $item['id'] ?>" class="btn btn-view m-0">
+                                <?= $lang['view_details'] ?? 'View Details' ?>
+                            </a>
+                            
+                            <form action="wishlist_action.php" method="POST" class="m-0">
+                                <input type="hidden" name="product_id" value="<?= $item['id'] ?>">
+                                <input type="hidden" name="action" value="remove">
+                                <button type="submit" class="btn btn-clear btn-full-width no-border m-0">
+                                    <?= $lang['remove_from_wishlist'] ?? 'Remove from Wishlist' ?>
+                                </button>
+                            </form>
+                            
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>

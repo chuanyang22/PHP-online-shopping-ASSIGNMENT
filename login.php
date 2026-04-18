@@ -39,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user) {
             if ($user['status'] == 'Blocked') {
-                $errors['general'] = "Your account is blocked! <a href='forgot_password.php' style='color:#ee4d2d;'>Reset your password to unblock.</a>";
+                // REMOVED INLINE CSS HERE
+                $errors['general'] = "Your account is blocked! <a href='forgot_password.php' class='auth-link-danger'>Reset your password to unblock.</a>";
             }
 
             if ($user['lockout_time'] !== null && empty($errors)) {
@@ -91,7 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } else {
-            $errors['general'] = "Account not found. <a href='register.php' style='color:#ee4d2d;'>Register here.</a>";
+            // REMOVED INLINE CSS HERE
+            $errors['general'] = "Account not found. <a href='register.php' class='auth-link-primary'>Register here.</a>";
         }
     }
 }
@@ -115,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="login.php" autocomplete="off">
-            <!-- Honeypot fields to confuse autofill -->
             <input type="text"     class="hidden-input">
             <input type="password" class="hidden-input">
 
@@ -138,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="auth-footer-text">
             <?= $lang['no_account'] ?>
-            <a href="register.php" class="link-primary"><?= $lang['sign_up'] ?></a>
+            <a href="register.php" class="auth-link-primary"><?= $lang['sign_up'] ?></a>
             <br><br>
             <a href="forgot_password.php" class="link-danger"><?= $lang['forgot_password'] ?></a>
             <br><br>

@@ -39,17 +39,17 @@ foreach ($chart_data as $row) {
     <?php require_once 'admin_sidebar.php'; ?>
 
     <main class="admin-main">
-        <div class="dashboard-chart-card" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div class="dashboard-chart-card bg-white p-30 radius-12 shadow-sm">
 
             <h2 class="dashboard-title mt-0 mb-20">📊 Dashboard — Top Selling Products</h2>
 
             <?php if (empty($labels)): ?>
-                <div class="empty-chart-state" style="text-align: center; padding: 50px;">
-                    <p class="empty-chart-text-1" style="font-size: 1.2em; color: #666;">No sales recorded yet.</p>
+                <div class="text-center p-50">
+                    <p class="empty-chart-text-1 text-muted font-1-2">No sales recorded yet.</p>
                     <p class="empty-chart-text-2">Try placing an order as a member first!</p>
                 </div>
             <?php else: ?>
-                <div style="position: relative; height:40vh; width:100%">
+                <div class="chart-container">
                     <canvas id="sellingChart"></canvas>
                 </div>
             <?php endif; ?>

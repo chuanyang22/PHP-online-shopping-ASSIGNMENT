@@ -32,7 +32,7 @@ try {
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$product) {
-        die("<h2 style='text-align:center; color: var(--text-main); margin-top:50px;'>Error: Product not found.</h2>");
+        die("<h2 class='text-center text-main mt-50'>Error: Product not found.</h2>");
     }
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
