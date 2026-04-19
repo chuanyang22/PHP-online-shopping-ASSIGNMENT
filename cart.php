@@ -1,6 +1,7 @@
 <?php
 // cart.php
 include 'header.php'; // Loads session, pdo, helpers, and language
+require_once __DIR__ . '/lib/cart_persist.php';
 
 // --- 1. HANDLE CART ACTIONS (Add/Update/Remove) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -20,6 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     } elseif ($_POST['action'] === 'remove') {
         unset($_SESSION['cart'][$product_id]);
+    }
+
+    if (!empty($_SESSION['user_id'])) {
+        cart_save_member_cart($pdo, (int) $_SESSION['user_id'], $_SESSION['cart']);
     }
     
     header("Location: cart.php");

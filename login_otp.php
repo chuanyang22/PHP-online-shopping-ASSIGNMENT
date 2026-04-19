@@ -3,6 +3,7 @@
 session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
+require_once 'lib/cart_persist.php';
 
 $current_lang = $_SESSION['lang'] ?? 'en';
 $lang_file = __DIR__ . "/lang/{$current_lang}.php";
@@ -34,6 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role']     = $user['role'];
                 unset($_SESSION['pending_user_id']);
+
+                if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+                    $_SESSION['cart'] = [];
+                }
+                $dbCart = cart_load_member_cart($pdo, (int) $user['id']);
+                $_SESSION['cart'] = cart_merge_carts($_SESSION['cart'], $dbCart);
+                cart_save_member_cart($pdo, (int) $user['id'], $_SESSION['cart']);
 
                 if (isset($_SESSION['wants_remember_me']) && $_SESSION['wants_remember_me'] === true) {
                     $token = bin2hex(random_bytes(32));

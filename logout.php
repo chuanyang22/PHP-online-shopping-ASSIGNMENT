@@ -2,6 +2,15 @@
 session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
+require_once 'lib/cart_persist.php';
+
+// 0. Save cart so it comes back after the next login
+if (isset($_SESSION['user_id'])) {
+    if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+    cart_save_member_cart($pdo, (int) $_SESSION['user_id'], $_SESSION['cart']);
+}
 
 // 1. Delete the token from the database
 if (isset($_SESSION['user_id'])) {

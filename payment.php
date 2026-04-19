@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'lib/db.php';
+require_once 'lib/cart_persist.php';
 
 // 1. Security Check: Make sure they are logged in and have an order ID
 if (!isset($_SESSION['user_id']) || !isset($_GET['order_id'])) {
@@ -27,8 +28,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'complete_payment') {
     $update = $pdo->prepare("UPDATE orders SET status = 'Completed' WHERE id = ?");
     $update->execute([$order_id]);
     
-    // Clear their shopping cart
+    // Clear their shopping cart (session + saved cart)
     $_SESSION['cart'] = [];
+    cart_clear_member_cart($pdo, (int) $user_id);
     
     // Send them straight to the Order History!
     header("Location: member/order_history.php");

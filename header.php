@@ -24,6 +24,14 @@ if (!file_exists($lang_file)) {
 require_once $lang_file;
 require_once $project_root . '/lib/db.php';
 require_once $project_root . '/lib/helpers.php';
+
+if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+if (!empty($_SESSION['user_id']) && empty($_SESSION['cart'])) {
+    require_once $project_root . '/lib/cart_persist.php';
+    $_SESSION['cart'] = cart_load_member_cart($pdo, (int) $_SESSION['user_id']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($current_lang) ?>">

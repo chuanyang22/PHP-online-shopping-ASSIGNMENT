@@ -2,6 +2,7 @@
 session_start();
 require_once 'lib/db.php';
 require_once 'lib/helpers.php';
+require_once 'lib/cart_persist.php';
 
 // Include language support if you have it, otherwise default to English
 $current_lang = $_SESSION['lang'] ?? 'en';
@@ -92,8 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($error)) {
 
             $pdo->commit();
 
-            // Clear cart after successful order
-            unset($_SESSION['cart']);
+            // Clear cart after successful order (session + saved cart)
+            cart_clear_member_cart($pdo, $user_id);
+            $_SESSION['cart'] = [];
 
             // Redirect to your specific history page
             header("Location: member/order_history.php");
