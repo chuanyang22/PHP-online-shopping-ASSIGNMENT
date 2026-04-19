@@ -1,0 +1,334 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Apr 19, 2026 at 05:40 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `amit1014_assignment`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admins`
+--
+
+CREATE TABLE `admins` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`id`, `email`, `password`) VALUES
+(1, 'admin@fithub.com', '$2y$10$kUqMUiYC2rzRczLYAZH/Q.euQn6s79rMIWq7JbfFu3lfQBwuW39yy');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`) VALUES
+(2, 'Mice & Mats'),
+(3, 'Keyboards & Keypads'),
+(4, 'Audio & Communication'),
+(5, 'Furniture & Lighting');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `member`
+--
+
+CREATE TABLE `member` (
+  `id` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('Admin','Member') DEFAULT 'Member',
+  `profile_photo` varchar(255) DEFAULT NULL,
+  `failed_attempts` int(11) DEFAULT 0,
+  `lockout_time` datetime DEFAULT NULL,
+  `remember_token` varchar(255) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL,
+  `lockout_count` int(11) DEFAULT 0,
+  `status` varchar(20) DEFAULT 'Active',
+  `unblock_token` varchar(255) DEFAULT NULL,
+  `unblock_expires` datetime DEFAULT NULL,
+  `otp_code` varchar(10) DEFAULT NULL,
+  `otp_expires` datetime DEFAULT NULL,
+  `address` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `member`
+--
+
+INSERT INTO `member` (`id`, `username`, `email`, `password`, `role`, `profile_photo`, `failed_attempts`, `lockout_time`, `remember_token`, `reset_token`, `reset_expires`, `lockout_count`, `status`, `unblock_token`, `unblock_expires`, `otp_code`, `otp_expires`, `address`) VALUES
+(1, 'M11', 'member1@gmail.com', '$2y$10$kIYukWfBJ.oqKQ33Nn6cc.qj6TsJ3gVf2v62kyFNQXqKyJykTkA9.', 'Member', 'user_1_1774203347.jpg', 4, '2026-03-23 16:12:36', NULL, '274a37ccfb5ba08b665c075fd5bb414d07efa1a94e00961f4ef5854425ca0ff0', '2026-03-24 00:28:28', 0, 'Active', NULL, NULL, NULL, NULL, NULL),
+(2, 'M2', 'member2@gmail.com', '$2y$10$w4vW1UGoqafLdorI328ssuKPE9P.ZDltCjm4EFRRcJVBmoNJDoirO', 'Member', NULL, 0, NULL, NULL, NULL, NULL, 0, 'Active', NULL, NULL, NULL, NULL, NULL),
+(3, 'ahkong', 'ahkong463@gmail.com', '$2y$10$7dtlwj9QUSObj.Jcf8Obre6.GuwwriGT8.JYx5a6kKhUhUJ7DPNWW', 'Member', 'user_3_1774282447.jpg', 0, NULL, 'df7867bea6610ba3eb6180d719a34b15f19ff5621c17629a3ec63a51a264fbdb', 'dfb296aa6e8dcc4541ed15a5a57ccb863535d59a7e743466aee7b9c11318f91d', '2026-03-24 01:15:47', 0, 'Active', NULL, NULL, NULL, NULL, 'test');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `shipping_address` text NOT NULL,
+  `order_date` datetime DEFAULT current_timestamp(),
+  `status` enum('Pending','Paid','Processing','Shipped','Delivered','Cancelled') DEFAULT 'Pending',
+  `payment_method` varchar(50) DEFAULT 'PayPal',
+  `paypal_order_id` varchar(100) DEFAULT NULL,
+  `paypal_capture_id` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `member_id`, `total_amount`, `shipping_address`, `order_date`, `status`, `payment_method`, `paypal_order_id`, `paypal_capture_id`) VALUES
+(1, 3, 699.00, 'test', '2026-04-19 11:25:58', 'Paid', 'PayPal', '6EY412081H6749322', '04879376BT9925430');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_items`
+--
+
+CREATE TABLE `order_items` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price_at_purchase` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES
+(1, 1, 1, 1, 699.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `image_name` varchar(255) DEFAULT NULL,
+  `stock_quantity` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `description`, `price`, `category_id`, `image_name`, `stock_quantity`) VALUES
+(1, 'Razer DeathAdder V4 Pro', 'Lightweight wireless mouse featuring Focus Pro 45K sensor.', 699.00, 2, 'image_2026-04-19_014150615.png', 49),
+(2, 'Razer Viper V4 Pro', 'Symmetrical wireless mouse designed for professional esports athletes.', 749.00, 2, 'image_2026-04-19_015915034.png', 40),
+(3, 'Razer Basilisk V3 Pro', 'Ergonomic wireless gaming mouse with customizable tilt wheel and Chroma RGB.', 799.00, 2, 'image_2026-04-19_015851976.png', 30),
+(4, 'Razer Naga V2 Pro', 'Modular wireless gaming mouse with 3 swappable side plates for MMOs.', 899.00, 2, 'image_2026-04-19_015821587.png', 25),
+(5, 'Razer Cobra', 'Compact and lightweight wired gaming mouse with Razer Chroma RGB.', 199.00, 2, 'image_2026-04-19_015803573.png', 100),
+(6, 'Razer Gigantus V2 Pro', 'Large, thick gaming mouse mat optimized for smooth tracking.', 149.00, 2, 'image_2026-04-19_015741009.png', 80),
+(7, 'Razer HyperFlux V2', 'Wireless charging mat and mouse bundle for continuous power.', 1199.00, 2, 'image_2026-04-19_015517317.png', 15),
+(8, 'Razer BlackWidow V4 Pro', 'Premium mechanical gaming keyboard with Command Dial and macro keys.', 1099.00, 3, 'image_2026-04-19_015303537.png', 20),
+(9, 'Razer BlackWidow V4 75%', 'Hot-swappable mechanical keyboard for deep customization.', 949.00, 3, 'image_2026-04-19_015243311.png', 30),
+(10, 'Razer DeathStalker V2 Pro TKL', 'Low-profile wireless optical keyboard for high-speed actuation.', 999.00, 3, 'image_2026-04-19_015126372.png', 25),
+(11, 'Razer Huntsman V3 Pro', 'Analog optical esports keyboard for adjustable actuation.', 1249.00, 3, 'image_2026-04-19_015034882.png', 15),
+(12, 'Razer Ornata V3 X', 'Low-profile membrane RGB gaming keyboard.', 229.00, 3, 'image_2026-04-19_015004474.png', 60),
+(13, 'Razer Tartarus V2', 'Gaming keypad with 32 programmable keys for complex macros.', 399.00, 3, 'image_2026-04-19_014925180.png', 35),
+(14, 'Razer BlackShark V3 Pro', 'Premier wireless esports headset with retractable mic.', 999.00, 4, 'image_2026-04-19_014817556.png', 40),
+(15, 'Razer Kraken V4 Pro', 'Immersive headset with 360 spatial audio and haptics.', 1099.00, 4, 'image_2026-04-19_014725870.png', 20),
+(16, 'Razer Hammerhead V3 HyperSpeed', 'Wireless earbuds designed for low-latency multi-platform gaming.', 699.00, 4, 'image_2026-04-19_014647614.png', 50),
+(17, 'Razer Seiren V3 Chroma', 'Professional-grade USB microphone for streaming and content creation.', 699.00, 4, 'image_2026-04-19_014600093.png', 30),
+(18, 'Razer Iskur V2 NewGen', 'Ergonomic gaming chair with adjustable lumbar support system.', 2499.00, 5, 'image_2026-04-19_014427908.png', 10),
+(19, 'Razer Freyja', 'Haptic gaming cushion for immersive physical feedback.', 1499.00, 5, 'image_2026-04-19_014406125.png', 15),
+(20, 'Razer Aether Monitor Light Bar', 'RGB light bar for dual-sided ambient lighting and desk illumination.', 649.00, 5, 'image_2026-04-19_014333419.png', 25);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wishlist`
+--
+
+CREATE TABLE `wishlist` (
+  `id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `added_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wishlist`
+--
+
+INSERT INTO `wishlist` (`id`, `member_id`, `product_id`, `added_at`) VALUES
+(3, 3, 3, '2026-04-19 02:15:27');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admins`
+--
+ALTER TABLE `admins`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `member`
+--
+ALTER TABLE `member`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `member_id` (`member_id`);
+
+--
+-- Indexes for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `wishlist`
+--
+ALTER TABLE `wishlist`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `member_id` (`member_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `admins`
+--
+ALTER TABLE `admins`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `member`
+--
+ALTER TABLE `member`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `wishlist`
+--
+ALTER TABLE `wishlist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wishlist`
+--
+ALTER TABLE `wishlist`
+  ADD CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
