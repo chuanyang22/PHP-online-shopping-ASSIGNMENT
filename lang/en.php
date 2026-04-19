@@ -85,7 +85,7 @@ $lang = [
     'save_changes'      => 'SAVE CHANGES',
     'cancel'            => 'Cancel',
 
-    'my_purchases' => 'My Purchases',
+    'my_purchases' => 'My Purchase(s)',
     'order_no' => 'Order #',
     'date' => 'Date',
     'status' => 'Status',
