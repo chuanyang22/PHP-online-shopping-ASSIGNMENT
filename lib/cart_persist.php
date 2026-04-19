@@ -89,3 +89,25 @@ function cart_merge_carts(array $session_cart, array $db_cart): array
     }
     return $merged;
 }
+
+/** Safe relative URL for redirect after add-to-cart (same site only). */
+function cart_safe_internal_return(string $return): ?string
+{
+    $return = trim($return);
+    if ($return === '' || strlen($return) > 512) {
+        return null;
+    }
+    if (strpos($return, '..') !== false) {
+        return null;
+    }
+    if (preg_match('/[\s\x00]/', $return)) {
+        return null;
+    }
+    if (preg_match('#^(https?:)?//#i', $return)) {
+        return null;
+    }
+    if (!preg_match('#^[a-z0-9_.?=&/-]+$#i', $return)) {
+        return null;
+    }
+    return $return;
+}

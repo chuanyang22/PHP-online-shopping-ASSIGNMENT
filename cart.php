@@ -26,8 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!empty($_SESSION['user_id'])) {
         cart_save_member_cart($pdo, (int) $_SESSION['user_id'], $_SESSION['cart']);
     }
-    
-    header("Location: cart.php");
+
+    if ($_POST['action'] === 'add') {
+        $return = cart_safe_internal_return((string) ($_POST['return'] ?? ''));
+        if ($return !== null) {
+            $_SESSION['cart_flash_key'] = 'added_to_cart';
+            header('Location: ' . $return);
+            exit();
+        }
+    }
+
+    header('Location: cart.php');
     exit();
 }
 

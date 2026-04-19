@@ -17,5 +17,34 @@
         <p class="mt-15"><?= $lang['footer_copy'] ?></p>
     </footer>
 
+<script>
+function showCartToast(message) {
+    var el = document.createElement('div');
+    el.className = 'cart-toast';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(function () {
+        el.classList.add('cart-toast--visible');
+    });
+    setTimeout(function () {
+        el.classList.remove('cart-toast--visible');
+        setTimeout(function () {
+            if (el.parentNode) {
+                el.parentNode.removeChild(el);
+            }
+        }, 280);
+    }, 3800);
+}
+</script>
+<?php if (!empty($cart_toast_message ?? null)): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    showCartToast(<?= json_encode($cart_toast_message, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>);
+});
+</script>
+<?php endif; ?>
+
 </body>
 </html>

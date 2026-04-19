@@ -19,6 +19,7 @@ $lang = [
     'clear_btn'         => 'Clear',
     'no_products'       => 'No products found matching your search.',
     'add_to_cart'       => '🛒 Add',
+    'added_to_cart'     => 'Product added to your cart.',
     'save_wishlist'     => '❤️ Save',
     'view_details'      => 'View Details',
 

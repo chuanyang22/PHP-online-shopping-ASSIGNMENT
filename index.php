@@ -35,6 +35,27 @@ if (isset($_GET['category_filter']) && $_GET['category_filter'] !== '') {
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $products = $stmt->fetchAll();
+
+$cart_return_index = 'index.php';
+$cart_return_query = [];
+if ($category_filter !== '') {
+    $cart_return_query['category_filter'] = $category_filter;
+}
+if ($search_keyword !== '') {
+    $cart_return_query['search'] = $search_keyword;
+}
+if (!empty($cart_return_query)) {
+    $cart_return_index .= '?' . http_build_query($cart_return_query);
+}
+
+$cart_toast_message = null;
+if (!empty($_SESSION['cart_flash_key'])) {
+    $flash_key = $_SESSION['cart_flash_key'];
+    unset($_SESSION['cart_flash_key']);
+    if ($flash_key === 'added_to_cart') {
+        $cart_toast_message = $lang['added_to_cart'] ?? 'Product added to your cart.';
+    }
+}
 ?>
 
 <div class="home-container">
@@ -86,6 +107,7 @@ $products = $stmt->fetchAll();
                                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                     <input type="hidden" name="action" value="add">
                                     <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="return" value="<?= htmlspecialchars($cart_return_index, ENT_QUOTES, 'UTF-8') ?>">
                                     <button type="submit" class="btn btn-add-cart">
                                         <?= $lang['add_to_cart'] ?? 'Add to Cart' ?>
                                     </button>

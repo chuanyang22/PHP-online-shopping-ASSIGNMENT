@@ -2047,6 +2047,46 @@ html[lang="cn"] .btn-checkout {
     font-size: 14px;
 }
 
+/* Add-to-cart toast (popup) */
+.cart-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    max-width: min(360px, calc(100vw - 32px));
+    padding: 14px 18px 14px 20px;
+    background: #e8f5e9;
+    color: #1b5e20;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left: 5px solid #2e7d32;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    z-index: 10050;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    pointer-events: none;
+}
+.cart-toast--visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+body.dark-mode .cart-toast {
+    background: #1b3320;
+    color: #c8e6c9;
+    border-left-color: #66bb6a;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+@media (max-width: 520px) {
+    .cart-toast {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+        max-width: none;
+    }
+}
+
 /* Order Cards */
 .order-card {
     background: var(--bg-card); /* Uses theme background */

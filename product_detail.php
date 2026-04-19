@@ -37,6 +37,15 @@ try {
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
+
+$cart_toast_message = null;
+if (!empty($_SESSION['cart_flash_key'])) {
+    $flash_key = $_SESSION['cart_flash_key'];
+    unset($_SESSION['cart_flash_key']);
+    if ($flash_key === 'added_to_cart') {
+        $cart_toast_message = $lang['added_to_cart'] ?? 'Product added to your cart.';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +74,7 @@ try {
         <form action="cart.php" method="POST" class="detail-form mb-20">
             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
             <input type="hidden" name="action" value="add">
+            <input type="hidden" name="return" value="product_detail.php?id=<?= (int) $product['id'] ?>">
             
             <label for="quantity" class="qty-label font-bold mr-15"><?= $lang['qty'] ?? 'Qty' ?>:</label>
             <input type="number" name="quantity" id="quantity" value="1" min="1" max="<?= $product['stock_quantity'] ?>" class="qty-input-small inline-block">

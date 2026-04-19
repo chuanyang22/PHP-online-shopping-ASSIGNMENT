@@ -19,6 +19,7 @@ $lang = [
     'clear_btn'         => '清除',
     'no_products'       => '未找到符合您搜索的商品。',
     'add_to_cart'       => '🛒 加入购物车',
+    'added_to_cart'     => '商品已加入购物车。',
     'save_wishlist'     => '❤️ 收藏',
     'view_details'      => '查看详情',
 

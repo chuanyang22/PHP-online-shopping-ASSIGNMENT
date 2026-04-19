@@ -19,6 +19,7 @@ $lang = [
     'clear_btn'         => 'Padam',
     'no_products'       => 'Tiada produk ditemui untuk carian anda.',
     'add_to_cart'       => '🛒 Tambah',
+    'added_to_cart'     => 'Produk telah ditambah ke troli anda.',
     'save_wishlist'     => '❤️ Simpan',
     'view_details'      => 'Lihat Butiran',
 
